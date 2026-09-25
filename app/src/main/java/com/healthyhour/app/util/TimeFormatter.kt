@@ -30,18 +30,18 @@ object TimeFormatter {
         if (previous == 0L) return "Sin datos previos"
         val change = ((current - previous).toFloat() / previous * 100).toInt()
         return when {
-            change > 0 -> "+$change% vs ayer \uD83D\uDCC8"
-            change < 0 -> "$change% vs ayer \uD83C\uDF89"
+            change > 0 -> "+$change% vs ayer"
+            change < 0 -> "$change% vs ayer"
             else -> "Igual que ayer"
         }
     }
 
     fun getTimeOfDayLabel(hour: Int): String {
         return when (hour) {
-            in 6..11 -> "\uD83C\uDF05 Mañana"
-            in 12..17 -> "\u2600\uFE0F Tarde"
-            in 18..22 -> "\uD83C\uDF19 Noche"
-            else -> "\uD83C\uDF03 Madrugada"
+            in 6..11 -> "Mañana"
+            in 12..17 -> "Tarde"
+            in 18..22 -> "Noche"
+            else -> "Madrugada"
         }
     }
 }

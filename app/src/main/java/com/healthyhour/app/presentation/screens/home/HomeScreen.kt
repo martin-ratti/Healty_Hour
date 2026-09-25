@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,10 +23,20 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "TimeLens",
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.RemoveRedEye,
+                            contentDescription = null,
+                            tint = NeonBlue
+                        )
+                        Text(
+                            text = "TimeLens",
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 },
                 actions = {
                     IconButton(onClick = { /* TODO: navigate to settings */ }) {
@@ -52,23 +62,21 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 24.dp)
         ) {
-            // Circular progress - total screen time
             item {
                 CircularProgressCard(
                     totalTimeText = "4h 32m",
                     progress = 0.75f,
-                    comparisonText = "-15% vs ayer \uD83C\uDF89"
+                    comparisonText = "-15% vs ayer"
                 )
             }
 
-            // Stats row
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     StatCard(
-                        emoji = "\uD83D\uDD13",
+                        icon = Icons.Outlined.LockOpen,
                         title = "Desbloqueos",
                         value = "47",
                         subtitle = "hoy",
@@ -76,7 +84,7 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        emoji = "⏱️",
+                        icon = Icons.Outlined.Timer,
                         title = "Sesión más larga",
                         value = "1h 23m",
                         subtitle = "Instagram",
@@ -84,7 +92,7 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        emoji = "\uD83C\uDF19",
+                        icon = Icons.Outlined.DarkMode,
                         title = "Horario pico",
                         value = "Noche",
                         subtitle = "20:00-22:00",
@@ -94,21 +102,30 @@ fun HomeScreen(
                 }
             }
 
-            // Section title
             item {
-                Text(
-                    text = "📊 Apps más usadas",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 8.dp)
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.BarChart,
+                        contentDescription = null,
+                        tint = NeonBlue,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = "Apps más usadas",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
 
-            // App usage cards
             item {
                 AppUsageCard(
-                    emoji = "\uD83D\uDCF8",
+                    icon = Icons.Outlined.CameraAlt,
                     appName = "Instagram",
                     usageTime = "1h 45m",
                     progress = 1f,
@@ -119,7 +136,7 @@ fun HomeScreen(
 
             item {
                 AppUsageCard(
-                    emoji = "▶️",
+                    icon = Icons.Outlined.PlayCircle,
                     appName = "YouTube",
                     usageTime = "1h 12m",
                     progress = 0.68f,
@@ -130,7 +147,7 @@ fun HomeScreen(
 
             item {
                 AppUsageCard(
-                    emoji = "\uD83D\uDCAC",
+                    icon = Icons.Outlined.Chat,
                     appName = "WhatsApp",
                     usageTime = "48m",
                     progress = 0.45f,
@@ -141,7 +158,7 @@ fun HomeScreen(
 
             item {
                 AppUsageCard(
-                    emoji = "\uD83D\uDC26",
+                    icon = Icons.Outlined.Tag,
                     appName = "Twitter / X",
                     usageTime = "25m",
                     progress = 0.24f,
@@ -152,7 +169,7 @@ fun HomeScreen(
 
             item {
                 AppUsageCard(
-                    emoji = "\uD83C\uDFB5",
+                    icon = Icons.Outlined.MusicNote,
                     appName = "Spotify",
                     usageTime = "22m",
                     progress = 0.21f,
@@ -161,7 +178,6 @@ fun HomeScreen(
                 )
             }
 
-            // Toxic streak card
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -173,12 +189,23 @@ fun HomeScreen(
                     Column(
                         modifier = Modifier.padding(20.dp)
                     ) {
-                        Text(
-                            text = "\uD83D\uDD25 Racha tóxica",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = NeonRed
-                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.LocalFireDepartment,
+                                contentDescription = null,
+                                tint = NeonRed,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = "Racha tóxica",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = NeonRed
+                            )
+                        }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "2h 15min sin soltar el teléfono",
@@ -195,14 +222,24 @@ fun HomeScreen(
                 }
             }
 
-            // Footer note
             item {
-                Text(
-                    text = "⚠️ Estos son datos de demostración. Conectá tu teléfono y concedé el permiso de uso para ver datos reales.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     modifier = Modifier.padding(vertical = 8.dp)
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = "Estos son datos de demostración. Conectá tu teléfono y concedé el permiso de uso para ver datos reales.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                    )
+                }
             }
         }
     }

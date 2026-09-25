@@ -5,21 +5,23 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.healthyhour.app.presentation.theme.*
 
 @Composable
 fun AppUsageCard(
-    emoji: String,
+    icon: ImageVector,
     appName: String,
     usageTime: String,
     progress: Float,
@@ -52,20 +54,23 @@ fun AppUsageCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Emoji icon
                 Surface(
                     modifier = Modifier.size(48.dp),
                     shape = CircleShape,
                     color = accentColor.copy(alpha = 0.15f)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text(text = emoji, fontSize = 24.sp)
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = appName,
+                            tint = accentColor,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                // App info
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = appName,
@@ -80,7 +85,6 @@ fun AppUsageCard(
                     )
                 }
 
-                // Usage time
                 Text(
                     text = usageTime,
                     style = MaterialTheme.typography.titleMedium,
@@ -91,7 +95,6 @@ fun AppUsageCard(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Progress bar
             LinearProgressIndicator(
                 progress = { animatedProgress },
                 modifier = Modifier
@@ -110,7 +113,7 @@ fun AppUsageCard(
 fun AppUsageCardPreview() {
     TimeLensTheme(darkTheme = true) {
         AppUsageCard(
-            emoji = "📸",
+            icon = Icons.Outlined.CameraAlt,
             appName = "Instagram",
             usageTime = "1h 45m",
             progress = 0.8f,
