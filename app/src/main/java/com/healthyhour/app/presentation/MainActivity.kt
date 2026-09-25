@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.healthyhour.app.presentation.screens.home.HomeScreen
+import com.healthyhour.app.presentation.navigation.AppNavHost
 import com.healthyhour.app.presentation.theme.TimeLensTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TimeLensTheme(darkTheme = true) {
-                HomeScreen()
+                AppNavHost()
             }
         }
     }

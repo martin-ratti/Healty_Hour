@@ -1,5 +1,11 @@
 package com.healthyhour.app.presentation.navigation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShowChart
+import androidx.compose.ui.graphics.vector.ImageVector
+
 sealed class NavRoutes(val route: String) {
     data object Home : NavRoutes("home")
     data object AppDetail : NavRoutes("app_detail/{packageName}") {
@@ -8,4 +14,14 @@ sealed class NavRoutes(val route: String) {
     data object History : NavRoutes("history")
     data object Settings : NavRoutes("settings")
     data object Onboarding : NavRoutes("onboarding")
+}
+
+enum class BottomNavItem(
+    val route: String,
+    val icon: ImageVector,
+    val label: String
+) {
+    HOME(NavRoutes.Home.route, Icons.Filled.Home, "Inicio"),
+    HISTORY(NavRoutes.History.route, Icons.Filled.ShowChart, "Tendencias"),
+    SETTINGS(NavRoutes.Settings.route, Icons.Filled.Settings, "Ajustes")
 }
