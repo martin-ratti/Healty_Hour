@@ -125,7 +125,7 @@ fun CircularProgressCard(
 @Preview(showBackground = true, backgroundColor = 0xFF0D1117)
 @Composable
 fun CircularProgressCardPreview() {
-    HealthyHourTheme(darkTheme = true) {
+    TimeLensTheme(darkTheme = true) {
         CircularProgressCard(
             totalTimeText = "4h 32m",
             progress = 0.75f,

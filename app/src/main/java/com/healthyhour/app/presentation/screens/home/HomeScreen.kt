@@ -24,7 +24,7 @@ fun HomeScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "🕐 Healty Hour",
+                        text = "TimeLens",
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -211,7 +211,7 @@ fun HomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HealthyHourTheme(darkTheme = true) {
+    TimeLensTheme(darkTheme = true) {
         HomeScreen()
     }
 }

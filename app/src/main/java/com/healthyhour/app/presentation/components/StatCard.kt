@@ -65,7 +65,7 @@ fun StatCard(
 @Preview(showBackground = true, backgroundColor = 0xFF0D1117)
 @Composable
 fun StatCardPreview() {
-    HealthyHourTheme(darkTheme = true) {
+    TimeLensTheme(darkTheme = true) {
         StatCard(
             emoji = "🔓",
             title = "Desbloqueos",

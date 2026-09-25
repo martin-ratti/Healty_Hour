@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Healty Hour</string>
+    <string name="app_name">TimeLens</string>
     <string name="permission_title">Necesitamos acceso a tus datos de uso</string>
     <string name="permission_description">Para mostrarte estadísticas de tu tiempo de pantalla, necesitamos que habilites el permiso de acceso a datos de uso en la configuración del sistema.</string>
     <string name="permission_button">Abrir Ajustes</string>

@@ -108,7 +108,7 @@ fun AppUsageCard(
 @Preview(showBackground = true, backgroundColor = 0xFF0D1117)
 @Composable
 fun AppUsageCardPreview() {
-    HealthyHourTheme(darkTheme = true) {
+    TimeLensTheme(darkTheme = true) {
         AppUsageCard(
             emoji = "📸",
             appName = "Instagram",
