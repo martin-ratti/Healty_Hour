@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HealthyHour"
+rootProject.name = "TimeLens"
 include(":app")
