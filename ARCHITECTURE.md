@@ -1,247 +1,94 @@
-# 🏗️ Arquitectura — Healty Hour
+# 🏛️ Arquitectura del Proyecto (Clean Architecture)
 
-> Decisiones técnicas, patrones de diseño y la lógica detrás de la estructura del proyecto.
+Este proyecto usa algo llamado **Clean Architecture** (Arquitectura Limpia) junto con el patrón **MVVM** (Model-View-ViewModel). 
 
----
+¡Suena complejo, pero vamos a explicarlo con una analogía muy simple! 🍔
 
-## 📐 Patrón: MVVM + Clean Architecture
+## La Analogía del Restaurante 🍽️
 
-```
-┌─────────────────────────────────────────────┐
-│              PRESENTATION                    │
-│  (Compose Screens, ViewModels, Navigation)   │
-│                                              │
-│  Screen ←→ ViewModel ←→ UseCase              │
-└─────────────┬───────────────────────────────┘
-              │ (depende de)
-┌─────────────▼───────────────────────────────┐
-│               DOMAIN                         │
-│  (Models, Repository Interfaces, UseCases)   │
-│                                              │
-│  UseCase → Repository (interface)            │
-└─────────────┬───────────────────────────────┘
-              │ (implementa)
-┌─────────────▼───────────────────────────────┐
-│                DATA                          │
-│  (Room DB, UsageStatsManager, Repositories)  │
-│                                              │
-│  RepositoryImpl → DataSource / DAO           │
-└─────────────────────────────────────────────┘
-```
+Imagina que nuestra aplicación "Healthy Hour" es un restaurante muy elegante:
 
-### ¿Por qué esta arquitectura?
-
-| Principio | Beneficio |
-|:---|:---|
-| **Separación de responsabilidades** | Cada capa tiene un rol claro |
-| **Independencia del framework** | El dominio no depende de Android |
-| **Testeable** | Podés testear la lógica sin UI ni base de datos |
-| **Escalable** | Agregar features no rompe lo existente |
+1.  **Capa `presentation` (El Comedor y los Meseros):**
+    *   Es lo que el cliente ve y con lo que interactúa.
+    *   **UI / Composables:** Son las mesas, las luces, la decoración (la pantalla de tu celular).
+    *   **ViewModel:** Es el **mesero**. El mesero no cocina, solo toma tu pedido, va a la cocina, espera tu plato y te lo entrega en la mesa. El ViewModel recibe la orden (clicks) y trae los datos para mostrarlos en pantalla.
+2.  **Capa `domain` (El Libro de Recetas y las Reglas de Etiqueta):**
+    *   Es el corazón del negocio. Aquí no nos importa si cocinamos en estufa de gas o eléctrica (no nos importan las librerías de Android), solo nos importa *qué* se hace.
+    *   **Models:** Son la definición de los ingredientes. (¿Qué es un "uso de aplicación"? Es una foto, un nombre y unos minutos).
+    *   **Use Cases:** Son las reglas. Por ejemplo, "calcular el exceso de uso comparado con ayer".
+3.  **Capa `data` (La Cocina y los Proveedores):**
+    *   Es donde ocurre el trabajo duro de obtener los ingredientes.
+    *   **Repository:** Es el **Chef supervisor**. El ViewModel le pide comida al Chef, y el Chef decide si saca los ingredientes de la nevera local (Base de datos Room) o si llama al proveedor externo (Internet / API del Sistema Android).
+    *   **Data Sources / DAO:** Son los ayudantes de cocina que van físicamente a buscar los ingredientes a la base de datos.
 
 ---
 
-## 📂 Capas en Detalle
+## 🗺️ Mapa de Archivos (¿Dónde está cada cosa?)
 
-### 1. Data Layer (`data/`)
+Aquí tienes un mapa para que no te pierdas en el proyecto:
 
-Responsable de obtener y persistir datos. Tiene dos fuentes principales:
-
-#### `data/local/usage/` — Lectura del sistema
-- **`UsageDataSource`**: Wrapper de `UsageStatsManager` y `UsageEvents`
-- Lee datos crudos de uso del teléfono
-- Resuelve nombres e íconos de apps via `PackageManager`
-- **No almacena nada**, solo lee
-
-#### `data/local/db/` — Base de datos Room
-- **Entities**: `DailyUsage`, `AppDailyUsage` (tablas de la DB)
-- **DAOs**: Interfaces con queries SQL (consultas de los últimos 7 días, top apps, etc.)
-- **Database**: Clase `HealthyHourDatabase` que configura Room
-
-#### `data/repository/` — Implementaciones de repositorios
-- **`UsageRepositoryImpl`**: Implementa la interfaz del dominio
-- Combina datos de `UsageDataSource` (tiempo real) con Room (histórico)
-- Decide de dónde leer según lo que se necesite
-
-### 2. Domain Layer (`domain/`)
-
-La lógica pura del negocio. **No importa ninguna dependencia de Android.**
-
-#### `domain/model/` — Modelos de dominio
-```kotlin
-// Ejemplos:
-data class AppUsageInfo(
-    val packageName: String,
-    val appName: String,
-    val icon: Drawable?,
-    val totalTimeMs: Long,
-    val sessionCount: Int,
-    val longestSessionMs: Long,
-    val category: AppCategory?
-)
-
-data class DaySummary(
-    val date: LocalDate,
-    val totalScreenTimeMs: Long,
-    val totalUnlocks: Int,
-    val topApps: List<AppUsageInfo>,
-    val longestSession: Session?,
-    val peakHour: Int // 0-23
-)
-
-data class Session(
-    val packageName: String,
-    val startTime: Long,
-    val endTime: Long,
-    val durationMs: Long
-)
-```
-
-#### `domain/repository/` — Interfaces
-```kotlin
-interface UsageRepository {
-    suspend fun getTodaySummary(): DaySummary
-    suspend fun getAppUsageToday(): List<AppUsageInfo>
-    suspend fun getWeeklyTrend(): List<DaySummary>
-    suspend fun getSessions(packageName: String, date: LocalDate): List<Session>
-}
-```
-
-#### `domain/usecase/` — Casos de uso
-Cada caso de uso tiene una sola responsabilidad:
-- `GetDailySummaryUseCase`
-- `GetTopAppsUseCase`
-- `GetLongestSessionUseCase`
-- `GetWeeklyTrendUseCase`
-- `CalculatePeakHourUseCase`
-
-### 3. Presentation Layer (`presentation/`)
-
-Todo lo relacionado con la UI.
-
-#### `presentation/screens/` — Pantallas
-- **Home**: Dashboard principal con métricas del día
-- **Detail**: Detalle de una app específica
-- **History**: Tendencias semanales/mensuales
-- **Settings**: Configuración de la app
-
-#### `presentation/components/` — Componentes reutilizables
-- `CircularProgressIndicator` animado para tiempo total
-- `AppUsageCard` — Card con ícono, nombre y barra de progreso
-- `SessionTimeline` — Timeline visual de sesiones
-- `UsageChart` — Wrapper de Vico para gráficos
-
-#### `presentation/theme/` — Diseño visual
-- Paleta de colores (oscura con acentos)
-- Tipografía
-- Shapes y dimensiones
-
----
-
-## 🔌 Inyección de Dependencias (Hilt)
-
-```
-@Module ── UsageModule
-  ├── provideUsageStatsManager()
-  ├── provideUsageDataSource()
-  └── providePackageManager()
-
-@Module ── DatabaseModule
-  ├── provideDatabase()
-  ├── provideDailyUsageDao()
-  └── provideAppDailyUsageDao()
-
-@Module ── RepositoryModule
-  └── provideUsageRepository()
-```
-
-Cada ViewModel recibe sus UseCases por constructor injection:
-
-```kotlin
-@HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val getDailySummary: GetDailySummaryUseCase,
-    private val getTopApps: GetTopAppsUseCase,
-    private val getLongestSession: GetLongestSessionUseCase
-) : ViewModel() { ... }
+```text
+C:\Users\Marto\Desktop\Healty_Hour\app\src\main\java\com\example\healthyhour\
+│
+├── 📂 data/                 # 👨‍🍳 LA COCINA (Datos)
+│   ├── 📂 local/            # La despensa (Base de datos Room)
+│   │   ├── AppDao.kt        # El ayudante que guarda y lee de la BD.
+│   │   └── AppDatabase.kt   # La configuración de la base de datos local.
+│   ├── 📂 repository/       # El Chef que orquesta los datos.
+│   │   └── AppUsageRepositoryImpl.kt # Implementación real de cómo conseguir datos.
+│   └── 📂 usage_stats/      # El proveedor externo (El sistema Android).
+│       └── UsageStatsManager.kt # Habla con el sistema del celular para ver los tiempos de uso.
+│
+├── 📂 domain/               # 📖 EL LIBRO DE RECETAS (Reglas de negocio)
+│   ├── 📂 model/            # Conceptos de nuestro negocio.
+│   │   └── AppUsage.kt      # Define qué tiene una App (nombre, tiempo, ícono).
+│   └── 📂 repository/       # La interfaz (el contrato) para el Chef.
+│       └── AppUsageRepository.kt # Define qué DEBE hacer el Chef, pero no cómo.
+│
+├── 📂 presentation/         # 🍽️ EL COMEDOR (Lo que ve el usuario)
+│   ├── 📂 home/             # La pantalla principal.
+│   │   ├── HomeScreen.kt    # El diseño de la pantalla principal (Jetpack Compose).
+│   │   └── HomeViewModel.kt # El mesero que controla la HomeScreen.
+│   ├── 📂 components/       # Elementos visuales reutilizables (Botones, gráficas).
+│   └── 📂 theme/            # Colores, fuentes y estilos de la app.
+│
+├── 📂 di/                   # 🪄 LA MAGIA (Inyección de dependencias)
+│   └── AppModule.kt         # (Hilt) Aquí le decimos a la app cómo conectar las capas automáticamente.
+│
+└── MainActivity.kt          # 🚪 LA PUERTA DE ENTRADA de la aplicación.
 ```
 
 ---
 
-## 🔄 Flujo de Datos
+## 🔄 El Flujo de la Información (Diagrama)
 
-```
-UI (Compose) observa State del ViewModel
-         ↑ StateFlow
-    ViewModel llama UseCase
-         ↑ suspend fun
-    UseCase llama Repository (interfaz)
-         ↑ suspend fun
-    RepositoryImpl consulta DataSource o Room
-         ↑ UsageStatsManager / DAO
-    Sistema Android / SQLite
-```
+¿Cómo viaja la información cuando abres la app? Es una vía de un solo sentido para mantener el orden (Unidirectional Data Flow):
 
-**Principio: los datos fluyen hacia arriba, las dependencias apuntan hacia adentro.**
-
----
-
-## 🧮 Motor de Métricas — `SessionCalculator`
-
-El componente más importante de la lógica de negocio:
-
-```
-Eventos crudos del sistema (RESUMED / PAUSED)
-         ↓
-    SessionCalculator
-    ├── Emparejar RESUMED → PAUSED por packageName
-    ├── Manejar edge cases (sin PAUSED, sesiones superpuestas)
-    ├── Timeout máximo de sesión (4 horas)
-    └── Agrupar por franja horaria
-         ↓
-    Lista de Session + métricas derivadas
+```text
+  📱 PANTALLA (HomeScreen)
+         │
+         │ (1) El usuario abre la app / Pide datos
+         ▼
+  🤵 MESERO (HomeViewModel)
+         │
+         │ (2) Pide los datos de uso de hoy
+         ▼
+  👨‍🍳 CHEF (AppUsageRepository)
+         │
+         ├── (3a) Va a preguntar al sistema Android 
+         │        por los minutos usados hoy (UsageStatsManager)
+         │
+         └── (3b) Va a la base de datos local 
+                  a ver cuánto se usó ayer (AppDao / Room)
+         │
+         │ (4) El Chef junta todo y lo devuelve
+         ▼
+  🤵 MESERO (HomeViewModel)
+         │
+         │ (5) El mesero prepara los datos bonitos (estado)
+         ▼
+  📱 PANTALLA (HomeScreen)
+         (6) ¡La pantalla se actualiza y dibuja los tiempos! 🎉
 ```
 
-### Edge Cases a Manejar
-
-| Caso | Solución |
-|:---|:---|
-| RESUMED sin PAUSED posterior | Usar el siguiente RESUMED de otra app como fin |
-| Sesión que cruza medianoche | Dividir en dos sesiones |
-| Múltiples RESUMED seguidos | Ignorar duplicados, tomar el primero |
-| Timeout de sesión > 4h | Asumir que terminó, marcar como "estimada" |
-
----
-
-## 📊 Base de Datos — Esquema
-
-```
-┌───────────────┐        ┌──────────────────┐
-│  DailyUsage   │        │  AppDailyUsage   │
-├───────────────┤        ├──────────────────┤
-│ date (PK)     │───┐    │ id (PK)          │
-│ totalScreen   │   │    │ date (FK)        │←──┐
-│ totalUnlocks  │   └──→ │ packageName      │   │
-│ longestSession│        │ appName          │   │
-│ topApp        │        │ totalTimeMs      │   │
-│ ...           │        │ sessionCount     │   │
-└───────────────┘        │ longestSessionMs │   │
-                         │ category         │   │
-                         └──────────────────┘   │
-                                                │
-                         1 DailyUsage : N AppDailyUsage
-```
-
----
-
-## 🔐 Permisos
-
-| Permiso | Tipo | Uso |
-|:---|:---|:---|
-| `PACKAGE_USAGE_STATS` | Especial (Settings) | Leer datos de uso del sistema |
-| `POST_NOTIFICATIONS` | Runtime (API 33+) | Enviar notificaciones al usuario |
-| `FOREGROUND_SERVICE` | Normal | Servicio para monitoreo en tiempo real |
-| `RECEIVE_BOOT_COMPLETED` | Normal | Re-programar WorkManager después de reinicio |
-
----
-
-*Documento actualizado: 25 de septiembre de 2026*
+¡Con esta estructura, si algún día queremos cambiar cómo guardamos los datos en la base de datos, no tenemos que tocar la pantalla (UI) en absoluto! Cada uno hace su trabajo por separado.

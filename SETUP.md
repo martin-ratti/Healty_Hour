@@ -1,262 +1,87 @@
-# 🛠️ Guía de Preparación — Healty Hour
+# 🚀 Guía de Configuración Inicial (Setup Guide)
 
-> **Todo lo que necesitás instalar, configurar y tener listo antes de escribir la primera línea de código.**
+¡Hola y bienvenido(a) a tu primer proyecto en Android Studio! 🎉 
 
----
-
-## 📋 Checklist Rápido
-
-- [ ] Instalar Android Studio
-- [ ] Instalar JDK 17
-- [ ] Configurar un dispositivo Android real o emulador
-- [ ] Instalar Git
-- [ ] Clonar este repositorio
-- [ ] Crear el proyecto en Android Studio
-- [ ] Familiarizarte con Kotlin y Jetpack Compose (si es necesario)
+Sabemos que abrir una herramienta profesional por primera vez puede ser intimidante, ¡pero no te preocupes! Esta guía está diseñada para llevarte de la mano paso a paso. Piensa en esto como preparar tu cocina antes de empezar a cocinar tu primera receta. 👨‍🍳👩‍🍳
 
 ---
 
-## 1. 💻 Android Studio
+## 📚 Conceptos Básicos (¿Qué es todo esto?)
 
-### Instalación
+Antes de instalar cosas, entendamos qué son:
 
-1. Descargá **Android Studio** desde: https://developer.android.com/studio
-2. Instalá la versión más reciente estable (Ladybug o superior)
-3. Durante la instalación, asegurate de incluir:
-   - ✅ Android SDK
-   - ✅ Android SDK Platform (API 35 recomendado como target)
-   - ✅ Android Virtual Device (AVD)
-   - ✅ Android SDK Build-Tools
-   - ✅ Android SDK Command-line Tools
-
-### Configuración Post-Instalación
-
-1. Abrí Android Studio → **SDK Manager** (Settings → Languages & Frameworks → Android SDK)
-2. En la pestaña **SDK Platforms**, asegurate de tener instalado:
-   - Android 14.0 (API 35) — Target SDK
-   - Android 8.0 (API 26) — Minimum SDK (para testing)
-3. En la pestaña **SDK Tools**, verificá que estén instalados:
-   - Android SDK Build-Tools
-   - Android Emulator
-   - Android SDK Platform-Tools
-   - Google Play services (opcional pero recomendado)
-
-> 💡 **Espacio en disco:** Android Studio + SDK necesitan ~10-15 GB libres.
+*   **🛠️ Android Studio (IDE):** Es como tu taller o tu cocina. Es el programa (Entorno de Desarrollo Integrado) donde vas a escribir tu código, diseñar tus pantallas y probar tu aplicación.
+*   **👨‍🍳 Gradle:** Es como el chef o asistente de cocina. Tú le das las instrucciones (los archivos `build.gradle.kts`) y él se encarga de buscar los ingredientes (librerías de internet) y mezclar todo para "cocinar" tu aplicación final (el archivo APK que se instala en el celular).
+*   **🧰 Android SDK (Software Development Kit):** Es la caja de herramientas oficial que Google nos da. Tiene todo lo necesario para que tu código entienda cómo hablar con el teléfono (cómo usar la cámara, la pantalla, etc.).
+*   **📱 Emulador vs. Dispositivo Real:** Para probar tu app, puedes usar un "Emulador" (un celular virtual que vive dentro de tu computadora) o tu celular físico conectado por cable. El emulador es muy cómodo, pero usa mucha memoria de tu PC.
+*   **⚙️ JDK (Java Development Kit):** Es el motor que permite que tu computadora entienda y ejecute el código Kotlin o Java que vas a escribir.
 
 ---
 
-## 2. ☕ JDK (Java Development Kit)
+## 📝 Requisitos Previos
 
-Android Studio trae un JDK integrado, pero para estar seguro:
-
-- **Recomendado:** JDK 17 (LTS)
-- Descarga: https://adoptium.net/ (Eclipse Temurin)
-- Verificar instalación:
-  ```bash
-  java -version
-  # Esperado: openjdk version "17.x.x"
-  ```
-
-> ⚠️ **Importante:** No uses JDK 21 todavía para Android — algunas herramientas de Gradle aún no lo soportan completamente.
+*   Una computadora con Windows, Mac o Linux (mínimo 8GB de RAM, se recomiendan 16GB).
+*   Unos 10-15 GB de espacio libre en tu disco duro.
+*   ¡Paciencia y ganas de aprender! 💡
 
 ---
 
-## 3. 📱 Dispositivo de Pruebas
+## 🛠️ Paso 1: Instalar las Herramientas
 
-### Opción A: Dispositivo Real (⭐ RECOMENDADO)
-
-> **Para esta app en particular, un dispositivo real es ESENCIAL** porque el emulador no genera datos reales de uso de pantalla.
-
-1. Habilitá **Opciones de desarrollador** en tu teléfono:
-   - Ajustes → Acerca del teléfono → Tocar "Número de compilación" 7 veces
-2. Activá **Depuración USB**:
-   - Ajustes → Opciones de desarrollador → Depuración USB → ON
-3. Conectá el teléfono por USB al PC
-4. Aceptá el aviso de depuración en el teléfono
-5. En Android Studio, tu dispositivo debería aparecer en el selector de dispositivos
-
-### Opción B: Emulador (para UI solamente)
-
-1. Android Studio → **Device Manager** → Create Device
-2. Elegí un dispositivo (ej: Pixel 7)
-3. Seleccioná la imagen del sistema: API 35 con Google APIs
-4. Configurá RAM: mínimo 2 GB
-5. Iniciá el emulador
-
-> ⚠️ **Limitación:** El emulador NO genera datos de `UsageStatsManager`. Solo sirve para probar la UI con datos mock.
+1.  **Descarga Android Studio:** Ve a [developer.android.com/studio](https://developer.android.com/studio) y haz clic en el botón verde gigante de descarga.
+2.  **Instala el programa:** Abre el archivo que descargaste y sigue las instrucciones (puedes darle "Siguiente" o "Next" a todo, las opciones por defecto están bien).
+3.  **Abre Android Studio por primera vez:** Al abrirlo, te pedirá descargar el **Android SDK**. Deja que lo haga. Esto puede tardar varios minutos dependiendo de tu internet (¡son varios gigabytes!).
 
 ---
 
-## 4. 🔧 Git
+## 📂 Paso 2: Abrir este Proyecto (Healthy Hour)
 
-### Instalación
+1.  Abre Android Studio.
+2.  Haz clic en **"Open"** (Abrir).
+3.  Busca la carpeta `C:\Users\Marto\Desktop\Healty_Hour` (o donde hayas guardado este proyecto) y selecciónala.
+4.  Haz clic en "OK".
 
-- **Windows:** Descargá desde https://git-scm.com/download/win
-- Verificar:
-  ```bash
-  git --version
-  # Esperado: git version 2.x.x
-  ```
-
-### Configuración inicial
-
-```bash
-git config --global user.name "Tu Nombre"
-git config --global user.email "tu@email.com"
-```
-
-### Clonar el repositorio
-
-```bash
-git clone https://github.com/martin-ratti/Healty_Hour.git
-cd Healty_Hour
-```
+> **⚠️ IMPORTANTE: ¡El Primer Sync!**
+> En cuanto abras el proyecto, notarás que en la parte de abajo de la pantalla aparece una barra cargando. ¡Esto es **Gradle** trabajando!
+> La primera vez que abres el proyecto, Gradle tiene que descargar de internet todas las librerías necesarias. **Esto puede tardar de 5 a 10 minutos y descargará cerca de 1GB de datos.**
+> 🛑 **Regla de oro:** NO toques nada, no intentes editar código, ni intentes darle play hasta que la barra de abajo termine de cargar y desaparezca. Ve por un café ☕.
 
 ---
 
-## 5. 📦 Dependencias del Proyecto (Gradle)
+## 📱 Paso 3: Configurar cómo probar tu App
 
-Cuando crees el proyecto en Android Studio, necesitarás agregar estas dependencias en `build.gradle.kts` (Module: app):
+Para ver tu aplicación funcionando, necesitas un lugar donde ejecutarla.
 
-```kotlin
-// --- Jetpack Compose ---
-implementation(platform("androidx.compose:compose-bom:2024.09.00"))
-implementation("androidx.compose.ui:ui")
-implementation("androidx.compose.ui:ui-graphics")
-implementation("androidx.compose.ui:ui-tooling-preview")
-implementation("androidx.compose.material3:material3")
-implementation("androidx.activity:activity-compose:1.9.2")
+**Opción A: Usar un Emulador (Celular Virtual)**
+1.  Arriba a la derecha en Android Studio, busca un ícono que parece un celular con un logo de Android pequeño (Device Manager).
+2.  Haz clic en **"Create Device"** (Crear dispositivo).
+3.  Elige un modelo (ej. Pixel 7) y dale Next.
+4.  Elige una versión de Android (ej. API 34 o "Upside Down Cake"). Tendrás que darle al botón de descarga (Download) junto al nombre si es la primera vez.
+5.  Cuando termine, dale a Next y Finish.
+6.  Ahora, arriba en el centro, verás el nombre de tu emulador. ¡Haz clic en el botón de **Play verde** (▶️) para encenderlo!
 
-// --- Navigation Compose ---
-implementation("androidx.navigation:navigation-compose:2.8.0")
-
-// --- Room (Base de datos local) ---
-implementation("androidx.room:room-runtime:2.6.1")
-implementation("androidx.room:room-ktx:2.6.1")
-kapt("androidx.room:room-compiler:2.6.1")
-
-// --- Hilt (Inyección de dependencias) ---
-implementation("com.google.dagger:hilt-android:2.51.1")
-kapt("com.google.dagger:hilt-compiler:2.51.1")
-implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-// --- Gráficos (Vico) ---
-implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.22")
-implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.22")
-
-// --- WorkManager (Tareas en background) ---
-implementation("androidx.work:work-runtime-ktx:2.9.1")
-
-// --- Coroutines ---
-implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
-
-// --- Lifecycle ---
-implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
-implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.5")
-
-// --- Testing ---
-testImplementation("junit:junit:4.13.2")
-androidTestImplementation("androidx.test.ext:junit:1.2.1")
-androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-```
-
-> 💡 **Nota:** Las versiones pueden variar. Al crear el proyecto, Android Studio te sugerirá las últimas estables.
+**Opción B: Usar tu Celular Real (¡Más rápido!)**
+1.  En tu celular Android, ve a Configuración > Acerca del teléfono.
+2.  Busca "Número de compilación" y tócalo 7 veces rápido. Te dirá "¡Ya eres desarrollador!".
+3.  Vuelve atrás, busca "Opciones de desarrollador" y activa la "Depuración por USB".
+4.  Conecta tu celular a la PC con un cable USB.
+5.  En tu celular aparecerá un mensaje preguntando si confías en la computadora, dile que "Sí" (Permitir).
+6.  En Android Studio, arriba en el centro, debería aparecer el nombre de tu celular. Selecciónalo y dale al botón de **Play verde** (▶️).
 
 ---
 
-## 6. 📖 Conocimientos Previos Recomendados
+## 🚨 Sección de Solución de Problemas (Troubleshooting)
 
-### Imprescindibles ✅
+¿Algo salió mal? ¡No te asustes! A todos nos pasa.
 
-| Tema | Recurso | Tiempo estimado |
-|:---|:---|:---|
-| **Kotlin Básico** | [Kotlin Koans](https://kotlinlang.org/docs/koans.html) | 3-4 horas |
-| **Jetpack Compose Básico** | [Compose Tutorial Oficial](https://developer.android.com/jetpack/compose/tutorial) | 2-3 horas |
-| **Coroutines y Flow** | [Guía oficial](https://developer.android.com/kotlin/coroutines) | 2 horas |
+*   **Problema:** "Veo líneas rojas debajo de mis palabras en el código (Red Squiggles)"
+    *   **Qué significa:** El IDE encontró un error o no reconoce algo.
+    *   **Solución:** A veces es solo que Gradle no ha terminado. Si ya terminó, pon el mouse (sin hacer clic) encima de la palabra en rojo. Te dará una pista del error. A veces solo falta importar algo (Android Studio te sugerirá presionar `Alt + Enter` para arreglarlo automáticamente).
+*   **Problema:** "Me da un error de Java o JDK al sincronizar"
+    *   **Solución:** Ve a `File -> Settings -> Build, Execution, Deployment -> Build Tools -> Gradle`. Asegúrate de que en "Gradle JDK" esté seleccionado "jbr-17" (JetBrains Runtime 17) o la versión 17 de Java.
+*   **Problema:** "El botón de Play está gris y no me deja hacer clic"
+    *   **Solución:** Significa que Gradle está sincronizando (mira la barra de abajo) o que hay un error muy grave de configuración. Intenta ir a `File -> Sync Project with Gradle Files` (un ícono de elefante con una flecha azul arriba a la derecha).
+*   **Problema:** "El emulador va súper lento"
+    *   **Solución:** Los emuladores consumen muchos recursos. Si tu PC se traba, lo mejor es usar tu celular físico con un cable USB (Opción B).
 
-### Recomendados 📚
-
-| Tema | Recurso | Tiempo estimado |
-|:---|:---|:---|
-| **Room Database** | [Codelab Room](https://developer.android.com/codelabs/android-room-with-a-view-kotlin) | 2 horas |
-| **Hilt (DI)** | [Codelab Hilt](https://developer.android.com/codelabs/android-hilt) | 1-2 horas |
-| **MVVM en Android** | [Guide to app architecture](https://developer.android.com/topic/architecture) | 1 hora |
-| **UsageStatsManager** | [Documentación API](https://developer.android.com/reference/android/app/usage/UsageStatsManager) | 30 min |
-
-### Opcionales pero útiles 🎯
-
-| Tema | Recurso |
-|:---|:---|
-| Material Design 3 | [m3.material.io](https://m3.material.io/) |
-| Vico Charts | [GitHub Vico](https://github.com/patrykandpatrick/vico) |
-| WorkManager | [Guía oficial](https://developer.android.com/topic/libraries/architecture/workmanager) |
-
----
-
-## 7. 🖥️ Requisitos del Sistema
-
-### Mínimos
-
-| Componente | Requisito |
-|:---|:---|
-| OS | Windows 10 64-bit / macOS 10.14+ / Linux |
-| RAM | 8 GB (16 GB recomendado) |
-| Disco | 15 GB libres mínimo |
-| CPU | x86_64 con soporte de virtualización (para emulador) |
-| Resolución | 1280 x 800 mínimo |
-
-### Verificar virtualización (para emulador)
-
-En Windows, abrí el Administrador de Tareas → pestaña Rendimiento → CPU → verificá que "Virtualización" diga **Habilitado**.
-
-Si no está habilitado, entrá a la BIOS y activá **Intel VT-x** o **AMD-V**.
-
----
-
-## 8. 🚀 Primer Paso Concreto
-
-Una vez que tengas todo instalado:
-
-1. **Abrí Android Studio** → New Project → Empty Compose Activity
-2. **Nombre del proyecto:** `HealthyHour`
-3. **Package name:** `com.healthyhour.app`
-4. **Minimum SDK:** API 26 (Android 8.0 Oreo)
-5. **Build configuration language:** Kotlin DSL (Recommended)
-6. Esperá a que Gradle sincronice (~5-10 min la primera vez)
-7. Conectá tu teléfono, dale Run ▶️, y deberías ver "Hello Android!"
-8. **Copiá todos los archivos generados al repositorio clonado** y hacé tu primer commit
-
-```bash
-git add .
-git commit -m "feat: initial project setup with Empty Compose Activity"
-git push origin main
-```
-
-> 🎯 **Meta del Día 1:** Que la app lea y muestre en un `Text()` de Compose la lista de apps usadas hoy con su tiempo. Ese es tu "Hello World" para este proyecto.
-
----
-
-## ❓ Problemas Comunes
-
-### "No puedo ver mi dispositivo en Android Studio"
-- ¿Habilitaste Depuración USB?
-- ¿Instalaste los drivers USB del fabricante?
-- Probá con otro cable USB (los de solo carga no funcionan)
-
-### "Gradle tarda eternamente"
-- La primera sincronización descarga muchas dependencias. Sé paciente.
-- Verificá tu conexión a internet.
-- Si se queda colgado, invalidá caches: File → Invalidate Caches → Restart.
-
-### "El emulador no arranca"
-- ¿Está habilitada la virtualización en tu BIOS?
-- ¿Tenés suficiente RAM libre?
-- Probá con una imagen del sistema x86_64 en vez de ARM.
-
-### "Error con el permiso PACKAGE_USAGE_STATS"
-- Este permiso NO se pide con diálogo. Hay que redirigir al usuario a Ajustes del sistema.
-- Verificá que estés probando en un dispositivo real para ver datos reales.
-
----
-
-*Documento actualizado: 25 de septiembre de 2026*
+¡Listo! Ya tienes todo preparado. Tu siguiente parada debería ser leer la guía `BEGINNER_GUIDE.md` para entender qué es este código mágico que vas a modificar. ✨
