@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Healty Hour</string>
+    <string name="permission_title">Necesitamos acceso a tus datos de uso</string>
+    <string name="permission_description">Para mostrarte estadísticas de tu tiempo de pantalla, necesitamos que habilites el permiso de acceso a datos de uso en la configuración del sistema.</string>
+    <string name="permission_button">Abrir Ajustes</string>
+    <string name="tab_home">Inicio</string>
+    <string name="tab_history">Historial</string>
+    <string name="tab_settings">Ajustes</string>
+    <string name="today_screen_time">Tiempo de pantalla hoy</string>
+    <string name="top_apps">Apps más usadas</string>
+    <string name="longest_session">Sesión más larga</string>
+    <string name="unlocks">Desbloqueos</string>
+    <string name="peak_hour">Horario pico</string>
+    <string name="weekly_trend">Tendencia semanal</string>
+    <string name="no_data">Aún no hay datos de uso</string>
+</resources>
