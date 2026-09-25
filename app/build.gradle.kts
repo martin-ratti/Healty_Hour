@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.healthyhour.app"
+    namespace = "com.timelens.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.healthyhour.app"
+        applicationId = "com.timelens.app"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
