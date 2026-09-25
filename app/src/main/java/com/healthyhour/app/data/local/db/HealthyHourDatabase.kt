@@ -13,7 +13,7 @@ import com.healthyhour.app.data.local.db.entity.DailyUsageEntity
         AppDailyUsageEntity::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 abstract class HealthyHourDatabase : RoomDatabase() {
     abstract fun dailyUsageDao(): DailyUsageDao

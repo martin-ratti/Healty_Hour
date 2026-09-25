@@ -1,0 +1,49 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:translateX="10.8"
+        android:translateY="10.8">
+        <!-- Outer circle glow / ring -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#00D4FF"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:pathData="M 54,20 A 34,34 0 1,1 20,54" />
+
+        <!-- Accent arc in purple -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#BB86FC"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:pathData="M 20,54 A 34,34 0 0,1 54,20" />
+
+        <!-- Center clock dot -->
+        <path
+            android:fillColor="#00D4FF"
+            android:pathData="M 54,54 m -4,0 a 4,4 0 1,0 8,0 a 4,4 0 1,0 -8,0" />
+
+        <!-- Clock hands -->
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="3.5"
+            android:strokeLineCap="round"
+            android:pathData="M 54,54 L 54,34" />
+        <path
+            android:strokeColor="#00E676"
+            android:strokeWidth="3.5"
+            android:strokeLineCap="round"
+            android:pathData="M 54,54 L 68,54" />
+
+        <!-- Small decorative health heart/leaf at top-right -->
+        <path
+            android:fillColor="#00E676"
+            android:pathData="M 72,32 C 72,28 76,26 78,28 C 80,26 84,28 84,32 C 84,36 78,41 78,41 C 78,41 72,36 72,32 Z" />
+    </group>
+</vector>
