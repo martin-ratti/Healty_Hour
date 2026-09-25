@@ -1,0 +1,44 @@
+# Android Studio / IntelliJ
+*.iml
+.idea/
+.gradle/
+build/
+local.properties
+
+# Kotlin
+*.class
+*.jar
+*.war
+*.ear
+
+# Android
+*.apk
+*.aab
+*.ap_
+*.dex
+/captures
+.externalNativeBuild/
+.cxx/
+
+# Generated files
+bin/
+gen/
+out/
+
+# Signing
+*.jks
+*.keystore
+signing.properties
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Logs
+*.log
+
+# Test results
+/test-results/
+/test-output/
