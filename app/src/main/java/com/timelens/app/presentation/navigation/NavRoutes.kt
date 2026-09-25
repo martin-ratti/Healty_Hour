@@ -1,9 +1,9 @@
 package com.timelens.app.presentation.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ShowChart
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class NavRoutes(val route: String) {
@@ -22,6 +22,6 @@ enum class BottomNavItem(
     val label: String
 ) {
     HOME(NavRoutes.Home.route, Icons.Filled.Home, "Inicio"),
-    HISTORY(NavRoutes.History.route, Icons.Filled.ShowChart, "Tendencias"),
+    HISTORY(NavRoutes.History.route, Icons.AutoMirrored.Filled.ShowChart, "Tendencias"),
     SETTINGS(NavRoutes.Settings.route, Icons.Filled.Settings, "Ajustes")
 }

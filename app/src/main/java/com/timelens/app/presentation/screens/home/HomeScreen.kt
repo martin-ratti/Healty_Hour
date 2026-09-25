@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -147,7 +148,7 @@ fun HomeScreen(
 
             item {
                 AppUsageCard(
-                    icon = Icons.Outlined.Chat,
+                    icon = Icons.AutoMirrored.Outlined.Chat,
                     appName = "WhatsApp",
                     usageTime = "48m",
                     progress = 0.45f,

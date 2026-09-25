@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.EmojiEvents
-import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,7 +53,7 @@ fun HistoryScreen(
             modifier = Modifier.padding(bottom = 24.dp)
         ) {
             Icon(
-                imageVector = Icons.Outlined.TrendingUp,
+                imageVector = Icons.AutoMirrored.Outlined.TrendingUp,
                 contentDescription = null,
                 tint = NeonPurple,
                 modifier = Modifier.size(32.dp)
