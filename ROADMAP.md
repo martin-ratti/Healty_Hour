@@ -1,4 +1,4 @@
-# 🗺️ Roadmap — Healty Hour
+# 🗺️ Roadmap — TimeLens
 
 > Plan de desarrollo por fases, con tareas específicas y cronograma estimado.
 
@@ -97,7 +97,7 @@
 
 - [ ] Crear entidades Room (`DailyUsage`, `AppDailyUsage`)
 - [ ] Crear DAOs con queries útiles
-- [ ] Crear `HealthyHourDatabase`
+- [ ] Crear `TimeLensDatabase`
 - [ ] Implementar `Worker` (WorkManager) para guardar snapshots cada hora
 - [ ] Tarea periódica de resumen al final del día
 - [ ] Implementar migración de esquema para futuras versiones

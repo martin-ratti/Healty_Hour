@@ -39,7 +39,7 @@ El proyecto está organizado usando algo llamado "Arquitectura Limpia" (Clean Ar
 ## Parte 3: Cómo Funciona la App (El Flujo) 🔄
 
 1.  **El usuario abre la app:** El sistema Android busca tu `MainActivity` y la inicia.
-2.  **El Tema (Theme):** Se aplica el `HealthyHourTheme`, que define los colores (claro/oscuro).
+2.  **El Tema (Theme):** Se aplica el `TimeLensTheme`, que define los colores (claro/oscuro).
 3.  **La Pantalla:** Se llama al composable `HomeScreen`, que dibuja la interfaz.
 4.  **El Cerebro:** `HomeScreen` le pide los datos al `HomeViewModel`.
 5.  **Los Datos:** El ViewModel usa un Repositorio (la cocina) para conseguir estadísticas de uso del celular a través del sistema de Android (UsageStatsManager).
@@ -88,16 +88,16 @@ La mejor forma de aprender es rompiendo cosas (¡con cuidado!). Intenta hacer es
 
 1.  **Cambiar el nombre de la app:**
     *   Ve a `app/src/main/res/values/strings.xml`.
-    *   Busca `app_name` y cambia "Healthy Hour" por "Mi App Genial". ¡Corre la app!
+    *   Busca `app_name` y cambia "TimeLens" por "Mi App Genial". ¡Corre la app!
 2.  **Cambiar colores:**
-    *   Ve a `app/src/main/java/com/example/healthyhour/ui/theme/Color.kt`.
-    *   Cambia los códigos HEX (como `0xFF00FF00`) para ver cómo cambian los botones y fondos.
+    *   Ve a `app/src/main/java/com/timelens/app/presentation/theme/Color.kt`.
+    *   Cambia los códigos HEX (como `NeonBlue` o `NeonPurple`) para ver cómo cambian los acentos de la app.
 3.  **Cambiar los datos de prueba (Mock Data):**
-    *   Ve al archivo `HomeScreen.kt` (o donde estén los datos simulados en la capa de UI).
-    *   Busca la lista de aplicaciones (como "TikTok", "Instagram").
-    *   ¡Cambia los emojis, pon el nombre de tus apps favoritas o cambia los minutos!
-4.  **Añade una sexta app:**
-    *   En esa misma lista de prueba en el código, copia un bloque entero de una app, pégalo debajo, y cambia sus datos para tener 6 elementos.
+    *   Ve al archivo `HomeScreen.kt`.
+    *   Busca la lista de aplicaciones (como "Instagram", "YouTube").
+    *   ¡Cambia los iconos o nombres de tus apps favoritas o modifica los minutos!
+4.  **Añade una app adicional:**
+    *   En esa misma lista de prueba en el código, añade un nuevo `AppUsageCard` debajo y cambia sus datos.
 5.  **Juega con los Textos:**
     *   Cambia cualquier texto que diga "VS ayer" por "Comparado con el día de ayer".
 

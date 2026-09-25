@@ -34,11 +34,11 @@ Antes de instalar cosas, entendamos qué son:
 
 ---
 
-## 📂 Paso 2: Abrir este Proyecto (Healthy Hour)
+## 📂 Paso 2: Abrir este Proyecto (TimeLens)
 
 1.  Abre Android Studio.
 2.  Haz clic en **"Open"** (Abrir).
-3.  Busca la carpeta `C:\Users\Marto\Desktop\Healty_Hour` (o donde hayas guardado este proyecto) y selecciónala.
+3.  Busca la carpeta donde guardaste este proyecto y selecciónala.
 4.  Haz clic en "OK".
 
 > **⚠️ IMPORTANTE: ¡El Primer Sync!**

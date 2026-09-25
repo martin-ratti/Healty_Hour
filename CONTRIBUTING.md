@@ -1,4 +1,4 @@
-# 🤝 Guía de Contribución — Healty Hour
+# 🤝 Guía de Contribución — TimeLens
 
 > Convenciones, reglas y flujo de trabajo para mantener el proyecto organizado.
 
