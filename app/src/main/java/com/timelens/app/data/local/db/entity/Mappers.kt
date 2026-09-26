@@ -23,7 +23,7 @@ fun AppDailyUsageEntity.toDomain(icon: Any?): AppUsageInfo {
     return AppUsageInfo(
         packageName = this.packageName,
         appName = this.appName,
-        icon = icon,
+        icon = icon as? android.graphics.drawable.Drawable,
         totalTimeMs = this.totalTimeMs,
         sessionCount = this.sessionCount,
         longestSessionMs = this.longestSessionMs

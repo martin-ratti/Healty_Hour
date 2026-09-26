@@ -3,7 +3,7 @@ package com.timelens.app.presentation.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timelens.app.domain.model.DaySummary
-import com.timelens.app.domain.repository.UsageRepository
+import com.timelens.app.domain.usecase.CheckUsagePermissionUseCase
 import com.timelens.app.domain.usecase.GetDailySummaryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
