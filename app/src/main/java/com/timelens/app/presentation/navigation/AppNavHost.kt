@@ -1,5 +1,7 @@
 package com.timelens.app.presentation.navigation
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
@@ -7,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -15,16 +18,21 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.timelens.app.presentation.screens.history.HistoryScreen
 import com.timelens.app.presentation.screens.home.HomeScreen
+import com.timelens.app.presentation.screens.onboarding.OnboardingScreen
 import com.timelens.app.presentation.screens.settings.SettingsScreen
 import com.timelens.app.presentation.theme.DarkBackground
 import com.timelens.app.presentation.theme.DarkSurface
 import com.timelens.app.presentation.theme.NeonBlue
 
 @Composable
-fun AppNavHost(modifier: Modifier = Modifier) {
+fun AppNavHost(
+    modifier: Modifier = Modifier,
+    startDestination: String = NavRoutes.Home.route
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val context = LocalContext.current
 
     val showBottomBar = BottomNavItem.entries.any { item ->
         currentDestination?.hierarchy?.any { it.route == item.route } == true
@@ -76,11 +84,24 @@ fun AppNavHost(modifier: Modifier = Modifier) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavRoutes.Home.route,
+            startDestination = startDestination,
             modifier = modifier.padding(innerPadding),
             enterTransition = { fadeIn(animationSpec = tween(300)) },
             exitTransition = { fadeOut(animationSpec = tween(300)) }
         ) {
+            composable(NavRoutes.Onboarding.route) {
+                OnboardingScreen(
+                    onOpenSettings = {
+                        val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                        context.startActivity(intent)
+                    },
+                    onPermissionGranted = {
+                        navController.navigate(NavRoutes.Home.route) {
+                            popUpTo(NavRoutes.Onboarding.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
             composable(NavRoutes.Home.route) {
                 HomeScreen()
             }
