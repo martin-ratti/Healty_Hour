@@ -81,6 +81,24 @@ class UsageDataSource @Inject constructor(
         }
     }
 
+    private val eligibleCache = mutableMapOf<String, Boolean>()
+    
+    fun isAppEligibleForStats(packageName: String): Boolean {
+        return eligibleCache.getOrPut(packageName) {
+            // Ignore common system UIs and Launchers
+            val lowerPkg = packageName.lowercase()
+            if (lowerPkg.contains("systemui") || 
+                lowerPkg.contains("launcher") || 
+                lowerPkg.contains("digitalwellbeing") ||
+                lowerPkg == "android") {
+                return@getOrPut false
+            }
+            // Check if it has a launcher intent (meaning it's a real user app)
+            val intent = packageManager.getLaunchIntentForPackage(packageName)
+            intent != null
+        }
+    }
+
     fun hasUsagePermission(): Boolean {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)

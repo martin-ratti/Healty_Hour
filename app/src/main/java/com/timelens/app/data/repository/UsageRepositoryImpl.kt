@@ -81,7 +81,9 @@ class UsageRepositoryImpl @Inject constructor(
         val metrics = SessionCalculator.calculateMetrics(events, calendar.timeInMillis)
 
         // Map from our exact usage calculations instead of UsageStats
-        metrics.appUsageMap.map { (packageName, totalTimeMs) ->
+        metrics.appUsageMap.mapNotNull { (packageName, totalTimeMs) ->
+            if (!dataSource.isAppEligibleForStats(packageName)) return@mapNotNull null
+            
             AppUsageInfo(
                 packageName = packageName,
                 appName = dataSource.getAppName(packageName),
