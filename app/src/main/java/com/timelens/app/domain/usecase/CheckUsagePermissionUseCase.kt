@@ -6,7 +6,5 @@ import javax.inject.Inject
 class CheckUsagePermissionUseCase @Inject constructor(
     private val repository: UsageRepository
 ) {
-    operator fun invoke(): Boolean {
-        return repository.hasUsagePermission()
-    }
+    operator fun invoke(): Boolean = repository.hasUsagePermission()
 }

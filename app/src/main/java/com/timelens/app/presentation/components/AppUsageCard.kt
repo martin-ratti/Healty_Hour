@@ -65,14 +65,14 @@ fun AppUsageCard(
                         if (icon is ImageVector) {
                             Icon(
                                 imageVector = icon,
-                                contentDescription = appName,
+                                contentDescription = "Icono de $appName",
                                 tint = accentColor,
                                 modifier = Modifier.size(24.dp)
                             )
                         } else {
                             AsyncImage(
                                 model = icon,
-                                contentDescription = appName,
+                                contentDescription = "Logo de $appName",
                                 modifier = Modifier.size(24.dp)
                             )
                         }
