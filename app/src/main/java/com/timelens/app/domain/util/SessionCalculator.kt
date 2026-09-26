@@ -32,25 +32,28 @@ object SessionCalculator {
                     activeSessions[event.packageName] = event.timeStamp
                 }
                 2 -> { // ACTIVITY_PAUSED / MOVE_TO_BACKGROUND
-                    val startTime = activeSessions.remove(event.packageName) ?: startTimeMs
-                    if (event.timeStamp > startTime) {
+                    val startTime = activeSessions.remove(event.packageName)
+                    if (startTime != null && event.timeStamp > startTime) {
                         val duration = event.timeStamp - startTime
                         
-                        // Update max session
-                        if (duration > longestSessionMs) {
-                            longestSessionMs = duration
-                            longestSessionAppPackage = event.packageName
+                        // Ignore impossibly long single sessions (e.g., > 12 hours) just as a safety net
+                        if (duration < 12 * 60 * 60 * 1000L) {
+                            // Update max session
+                            if (duration > longestSessionMs) {
+                                longestSessionMs = duration
+                                longestSessionAppPackage = event.packageName
+                            }
+                            totalSessions++
+                            
+                            // Update app usage map
+                            appUsageMap[event.packageName] = (appUsageMap[event.packageName] ?: 0L) + duration
+                            appSessionCountMap[event.packageName] = (appSessionCountMap[event.packageName] ?: 0) + 1
+                            
+                            // Add duration to the corresponding hour for peak hour calculation
+                            val calendar = Calendar.getInstance().apply { timeInMillis = startTime }
+                            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                            hourUsageMap[hour] = (hourUsageMap[hour] ?: 0L) + duration
                         }
-                        totalSessions++
-                        
-                        // Update app usage map
-                        appUsageMap[event.packageName] = (appUsageMap[event.packageName] ?: 0L) + duration
-                        appSessionCountMap[event.packageName] = (appSessionCountMap[event.packageName] ?: 0) + 1
-                        
-                        // Add duration to the corresponding hour for peak hour calculation
-                        val calendar = Calendar.getInstance().apply { timeInMillis = startTime }
-                        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-                        hourUsageMap[hour] = (hourUsageMap[hour] ?: 0L) + duration
                     }
                 }
             }
