@@ -47,7 +47,8 @@ class UsageRepositoryImpl @Inject constructor(
                 icon = dataSource.getAppIcon(packageName),
                 totalTimeMs = totalTimeMs,
                 sessionCount = metrics.appSessionCountMap[packageName] ?: 0,
-                longestSessionMs = if (metrics.longestSessionAppPackage == packageName) metrics.longestSessionMs else 0L
+                longestSessionMs = if (metrics.longestSessionAppPackage == packageName) metrics.longestSessionMs else 0L,
+                category = dataSource.getAppCategory(packageName)
             )
         }.filter { it.totalTimeMs > 0 }
          .sortedByDescending { it.totalTimeMs }
@@ -104,7 +105,8 @@ class UsageRepositoryImpl @Inject constructor(
                 icon = dataSource.getAppIcon(packageName),
                 totalTimeMs = totalTimeMs,
                 sessionCount = metrics.appSessionCountMap[packageName] ?: 0,
-                longestSessionMs = if (metrics.longestSessionAppPackage == packageName) metrics.longestSessionMs else 0L
+                longestSessionMs = if (metrics.longestSessionAppPackage == packageName) metrics.longestSessionMs else 0L,
+                category = dataSource.getAppCategory(packageName)
             )
         }.filter { it.totalTimeMs > 0 }
          .sortedByDescending { it.totalTimeMs }
@@ -133,6 +135,46 @@ class UsageRepositoryImpl @Inject constructor(
     override suspend fun getWeeklyTrend(): List<DaySummary> = withContext(Dispatchers.IO) {
         val entities = dailyUsageDao.getLastDays(7)
         entities.mapNotNull { getDaySummary(LocalDate.parse(it.date)) }.sortedBy { it.date }
+    }
+
+    override suspend fun getAppDetail(packageName: String): com.timelens.app.domain.model.AppDetailInfo = withContext(Dispatchers.IO) {
+        val calendar = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val events = dataSource.getDailyEvents()
+        val metrics = SessionCalculator.calculateMetrics(
+            eventsList = events,
+            startTimeMs = calendar.timeInMillis,
+            isEligibleApp = { true }
+        )
+
+        val totalTimeMs = metrics.appUsageMap[packageName] ?: 0L
+        val sessionCount = metrics.appSessionCountMap[packageName] ?: 0
+        val longestSessionMs = if (metrics.longestSessionAppPackage == packageName) metrics.longestSessionMs else 0L
+        val avgSessionMs = if (sessionCount > 0) totalTimeMs / sessionCount else 0L
+
+        val hourlyUsage = SessionCalculator.calculateAppHourlyUsage(events, packageName)
+
+        val dbHistory = appDailyUsageDao.getAppHistory(packageName, 7)
+        val weeklyHistory = dbHistory.map {
+            it.date to it.totalTimeMs
+        }.reversed()
+
+        com.timelens.app.domain.model.AppDetailInfo(
+            packageName = packageName,
+            appName = dataSource.getAppName(packageName),
+            icon = dataSource.getAppIcon(packageName),
+            category = dataSource.getAppCategory(packageName),
+            totalTimeMs = totalTimeMs,
+            sessionCount = sessionCount,
+            longestSessionMs = longestSessionMs,
+            avgSessionMs = avgSessionMs,
+            hourlyUsageMs = hourlyUsage,
+            weeklyHistory = weeklyHistory
+        )
     }
 
     override suspend fun saveDaySummary(summary: DaySummary) = withContext(Dispatchers.IO) {

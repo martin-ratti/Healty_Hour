@@ -10,11 +10,11 @@
 |:---|:---|:---|
 | Fase 0 — Preparación | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
 | Fase 1 — Permisos y Datos | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
-| Fase 2 — Motor de Métricas | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 90% |
-| Fase 3 — Base de Datos Room | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 90% |
-| Fase 4 — UI con Compose | 🟡 En progreso | ▓▓▓▓▓▓▓▓░░ 85% |
+| Fase 2 — Motor de Métricas | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
+| Fase 3 — Base de Datos Room | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 95% |
+| Fase 4 — UI con Compose | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
 | Fase 5 — Notificaciones | ⬜ Pendiente | ░░░░░░░░░░ 0% |
-| Fase 6 — Testing y Pulido | ⬜ Pendiente | ░░░░░░░░░░ 10% |
+| Fase 6 — Testing y Pulido | 🟡 En progreso | ▓▓▓░░░░░░░ 30% |
 | Fase 7 — Publicación | ⬜ Pendiente | ░░░░░░░░░░ 0% |
 
 ---
@@ -73,7 +73,7 @@
 ### Nivel Intermedio
 - [x] Sesión continua más larga por app
 - [x] Cantidad de aperturas por app (máquina de estados de línea de tiempo)
-- [ ] Tiempo promedio por sesión
+- [x] Tiempo promedio por sesión
 - [x] Horario pico (franja horaria con más actividad)
 
 ### Nivel Avanzado
@@ -81,7 +81,7 @@
 - [x] Comparativa día a día ("Hoy -15% vs ayer")
 - [x] Tendencia semanal (últimos 7 días con gráfico dinámico)
 - [ ] "Momento más productivo" — franja con menos uso
-- [ ] Categorización automática de apps
+- [x] Categorización automática de apps (Social, Entretenimiento, Productividad, Juegos, etc.)
 
 ### Testing del motor
 - [x] Crear `SessionCalculator` con máquina de estados precisa
@@ -117,14 +117,16 @@
 - [x] **Home / Dashboard**
   - Círculo animado con tiempo total y objetivo sincronizado
   - Barra comparativa dinámica con ayer
-  - Apps más usadas con íconos, aperturas y barra de progreso proporcional
+  - Desglose horizontal por Categorías de uso
+  - Apps más usadas con íconos, aperturas, categoría y barra de progreso proporcional
   - Tarjeta sesión más larga con nombre limpio
   - Tarjeta desbloqueos precisa
   - Tarjeta horario pico con formato limpio
-- [ ] **Detalle por App**
-  - Gráfico de barras por hora para la app seleccionada
-  - Aperturas y promedio por sesión
-  - Historial de uso de esa app
+- [x] **Detalle por App (`AppDetailScreen`)**
+  - Header con ícono grande, nombre limpio y badge de categoría
+  - 4 KPI cards: Tiempo hoy, aperturas, sesión máx. y promedio por sesión
+  - Gráfico de barras por hora para la app seleccionada (24 horas)
+  - Historial de uso de esa app (últimos 7 días)
 - [x] **Historial / Trends**
   - Gráfico de barras semanal con Compose Canvas nativo
   - Mejor y peor día calculados

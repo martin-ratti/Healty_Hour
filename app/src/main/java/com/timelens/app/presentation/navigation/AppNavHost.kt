@@ -103,7 +103,21 @@ fun AppNavHost(
                 )
             }
             composable(NavRoutes.Home.route) {
-                HomeScreen()
+                HomeScreen(
+                    onAppClick = { packageName ->
+                        navController.navigate(NavRoutes.AppDetail.createRoute(packageName))
+                    }
+                )
+            }
+            composable(
+                route = NavRoutes.AppDetail.route,
+                arguments = listOf(androidx.navigation.navArgument("packageName") {
+                    type = androidx.navigation.NavType.StringType
+                })
+            ) {
+                com.timelens.app.presentation.screens.detail.AppDetailScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
             }
             composable(NavRoutes.History.route) {
                 HistoryScreen()

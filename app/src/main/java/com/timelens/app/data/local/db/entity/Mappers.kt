@@ -26,7 +26,8 @@ fun AppDailyUsageEntity.toDomain(icon: Any?): AppUsageInfo {
         icon = icon as? android.graphics.drawable.Drawable,
         totalTimeMs = this.totalTimeMs,
         sessionCount = this.sessionCount,
-        longestSessionMs = this.longestSessionMs
+        longestSessionMs = this.longestSessionMs,
+        category = this.category?.let { runCatching { com.timelens.app.domain.model.AppCategory.valueOf(it) }.getOrNull() }
     )
 }
 
@@ -52,6 +53,6 @@ fun AppUsageInfo.toEntity(date: String): AppDailyUsageEntity {
         totalTimeMs = this.totalTimeMs,
         sessionCount = this.sessionCount,
         longestSessionMs = this.longestSessionMs,
-        category = null
+        category = this.category?.name
     )
 }

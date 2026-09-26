@@ -12,13 +12,26 @@ data class AppUsageInfo(
     val category: AppCategory? = null
 )
 
-enum class AppCategory {
-    SOCIAL,
-    ENTERTAINMENT,
-    PRODUCTIVITY,
-    COMMUNICATION,
-    GAMING,
-    EDUCATION,
-    UTILITY,
-    OTHER
+enum class AppCategory(val displayName: String) {
+    SOCIAL("Social"),
+    ENTERTAINMENT("Entretenimiento"),
+    PRODUCTIVITY("Productividad"),
+    COMMUNICATION("Comunicación"),
+    GAMING("Juegos"),
+    EDUCATION("Educación"),
+    UTILITY("Utilidades"),
+    OTHER("Otros")
 }
+
+data class AppDetailInfo(
+    val packageName: String,
+    val appName: String,
+    val icon: Drawable? = null,
+    val category: AppCategory = AppCategory.OTHER,
+    val totalTimeMs: Long = 0L,
+    val sessionCount: Int = 0,
+    val longestSessionMs: Long = 0L,
+    val avgSessionMs: Long = 0L,
+    val hourlyUsageMs: Map<Int, Long> = emptyMap(), // 0..23 hours -> ms
+    val weeklyHistory: List<Pair<String, Long>> = emptyList() // Date -> totalTimeMs
+)

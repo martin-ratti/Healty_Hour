@@ -125,6 +125,43 @@ class UsageDataSource @Inject constructor(
         }
     }
 
+    private val categoryCache = mutableMapOf<String, com.timelens.app.domain.model.AppCategory>()
+
+    fun getAppCategory(packageName: String): com.timelens.app.domain.model.AppCategory {
+        return categoryCache.getOrPut(packageName) {
+            try {
+                val appInfo = packageManager.getApplicationInfo(packageName, 0)
+                when (appInfo.category) {
+                    android.content.pm.ApplicationInfo.CATEGORY_GAME -> com.timelens.app.domain.model.AppCategory.GAMING
+                    android.content.pm.ApplicationInfo.CATEGORY_AUDIO,
+                    android.content.pm.ApplicationInfo.CATEGORY_VIDEO -> com.timelens.app.domain.model.AppCategory.ENTERTAINMENT
+                    android.content.pm.ApplicationInfo.CATEGORY_IMAGE,
+                    android.content.pm.ApplicationInfo.CATEGORY_SOCIAL -> com.timelens.app.domain.model.AppCategory.SOCIAL
+                    android.content.pm.ApplicationInfo.CATEGORY_NEWS,
+                    android.content.pm.ApplicationInfo.CATEGORY_PRODUCTIVITY -> com.timelens.app.domain.model.AppCategory.PRODUCTIVITY
+                    android.content.pm.ApplicationInfo.CATEGORY_MAPS,
+                    android.content.pm.ApplicationInfo.CATEGORY_ACCESSIBILITY -> com.timelens.app.domain.model.AppCategory.UTILITY
+                    else -> inferCategoryFromPackage(packageName)
+                }
+            } catch (e: Exception) {
+                inferCategoryFromPackage(packageName)
+            }
+        }
+    }
+
+    private fun inferCategoryFromPackage(packageName: String): com.timelens.app.domain.model.AppCategory {
+        val lower = packageName.lowercase()
+        return when {
+            lower.contains("whatsapp") || lower.contains("telegram") || lower.contains("messenger") || lower.contains("messaging") || lower.contains("dialer") -> com.timelens.app.domain.model.AppCategory.COMMUNICATION
+            lower.contains("instagram") || lower.contains("tiktok") || lower.contains("musically") || lower.contains("twitter") || lower.contains("facebook") || lower.contains("x.android") || lower.contains("linkedin") || lower.contains("reddit") -> com.timelens.app.domain.model.AppCategory.SOCIAL
+            lower.contains("youtube") || lower.contains("spotify") || lower.contains("netflix") || lower.contains("twitch") || lower.contains("primevideo") || lower.contains("disney") -> com.timelens.app.domain.model.AppCategory.ENTERTAINMENT
+            lower.contains("chrome") || lower.contains("drive") || lower.contains("docs") || lower.contains("sheets") || lower.contains("notion") || lower.contains("slack") || lower.contains("gmail") || lower.contains("outlook") -> com.timelens.app.domain.model.AppCategory.PRODUCTIVITY
+            lower.contains("duolingo") || lower.contains("learn") -> com.timelens.app.domain.model.AppCategory.EDUCATION
+            lower.contains("game") || lower.contains("candycrush") || lower.contains("supercell") || lower.contains("roblox") || lower.contains("minecraft") -> com.timelens.app.domain.model.AppCategory.GAMING
+            else -> com.timelens.app.domain.model.AppCategory.OTHER
+        }
+    }
+
     fun hasUsagePermission(): Boolean {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)

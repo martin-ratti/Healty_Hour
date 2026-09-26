@@ -121,4 +121,64 @@ object SessionCalculator {
             appSessionCountMap = appSessionCountMap
         )
     }
+
+    fun calculateAppHourlyUsage(
+        eventsList: List<UsageEvents.Event>,
+        targetPackage: String
+    ): Map<Int, Long> {
+        val hourlyMap = (0..23).associateWith { 0L }.toMutableMap()
+        var currentApp: String? = null
+        var sessionStartTime: Long = 0L
+        var pendingPauseTime: Long? = null
+
+        fun recordSession(start: Long, duration: Long) {
+            if (duration <= 0 || duration > 12 * 60 * 60 * 1000L) return
+            val calendar = Calendar.getInstance().apply { timeInMillis = start }
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            hourlyMap[hour] = (hourlyMap[hour] ?: 0L) + duration
+        }
+
+        fun closeSession(endTime: Long) {
+            if (currentApp == targetPackage && endTime > sessionStartTime) {
+                recordSession(sessionStartTime, endTime - sessionStartTime)
+            }
+            currentApp = null
+            sessionStartTime = 0L
+            pendingPauseTime = null
+        }
+
+        for (event in eventsList) {
+            when (event.eventType) {
+                1 -> { // Resumed
+                    if (event.packageName == currentApp) {
+                        pendingPauseTime = null
+                    } else {
+                        val effectiveEndTime = pendingPauseTime ?: event.timeStamp
+                        closeSession(effectiveEndTime)
+
+                        currentApp = event.packageName
+                        sessionStartTime = event.timeStamp
+                        pendingPauseTime = null
+                    }
+                }
+                2 -> { // Paused
+                    if (event.packageName == currentApp) {
+                        pendingPauseTime = event.timeStamp
+                    }
+                }
+                16, 17, 26 -> { // Screen off, lock, shutdown
+                    val effectiveEndTime = pendingPauseTime ?: event.timeStamp
+                    closeSession(effectiveEndTime)
+                }
+            }
+        }
+
+        if (currentApp == targetPackage) {
+            val currentTime = System.currentTimeMillis()
+            val effectiveEndTime = pendingPauseTime ?: currentTime
+            closeSession(effectiveEndTime)
+        }
+
+        return hourlyMap
+    }
 }

@@ -1,20 +1,26 @@
 package com.timelens.app.presentation.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.timelens.app.domain.model.AppCategory
 import com.timelens.app.domain.model.DaySummary
 import com.timelens.app.presentation.components.*
 import com.timelens.app.presentation.theme.*
@@ -24,6 +30,7 @@ import com.timelens.app.util.TimeFormatter
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    onAppClick: (String) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -104,7 +111,11 @@ fun HomeScreen(
                     )
                 }
                 is HomeUiState.Success -> {
-                    HomeContent(summary = state.summary, comparisonText = state.comparisonText)
+                    HomeContent(
+                        summary = state.summary,
+                        comparisonText = state.comparisonText,
+                        onAppClick = onAppClick
+                    )
                 }
             }
         }
@@ -112,10 +123,22 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeContent(summary: DaySummary, comparisonText: String) {
+fun HomeContent(
+    summary: DaySummary,
+    comparisonText: String,
+    onAppClick: (String) -> Unit = {}
+) {
     // Calculamos el objetivo de 6 horas para el progreso (6h = 21600000ms)
     val dailyGoalMs = 6 * 60 * 60 * 1000L
     val progress = (summary.totalScreenTimeMs.toFloat() / dailyGoalMs).coerceIn(0f, 1f)
+
+    val categoryUsage = remember(summary.topApps) {
+        summary.topApps
+            .groupBy { it.category ?: AppCategory.OTHER }
+            .mapValues { entry -> entry.value.sumOf { it.totalTimeMs } }
+            .toList()
+            .sortedByDescending { it.second }
+    }
     
     LazyColumn(
         modifier = Modifier
@@ -164,6 +187,77 @@ fun HomeContent(summary: DaySummary, comparisonText: String) {
             }
         }
 
+        // Categorías de uso
+        if (categoryUsage.isNotEmpty()) {
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Category,
+                        contentDescription = null,
+                        tint = NeonPurple,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = "Categorías",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(categoryUsage) { (category, timeMs) ->
+                        val catColor = when (category) {
+                            AppCategory.SOCIAL -> NeonPurple
+                            AppCategory.ENTERTAINMENT -> NeonOrange
+                            AppCategory.PRODUCTIVITY -> NeonBlue
+                            AppCategory.GAMING -> NeonGreen
+                            AppCategory.COMMUNICATION -> NeonCyan
+                            else -> MaterialTheme.colorScheme.primary
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = DarkCard,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .background(catColor)
+                                )
+                                Text(
+                                    text = category.displayName,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = TimeFormatter.formatMillisToShort(timeMs),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         item {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -186,15 +280,15 @@ fun HomeContent(summary: DaySummary, comparisonText: String) {
         }
 
         items(summary.topApps) { appInfo ->
-            // Usamos un icono por defecto si no tenemos el ícono real para el preview rápido,
-            // pero ahora soporta Coil con AsyncImage para el Drawable.
             AppUsageCard(
                 icon = appInfo.icon ?: Icons.Outlined.Apps,
                 appName = appInfo.appName,
                 usageTime = TimeFormatter.formatMillisToShort(appInfo.totalTimeMs),
                 progress = (appInfo.totalTimeMs.toFloat() / summary.totalScreenTimeMs).coerceIn(0f, 1f),
                 accentColor = NeonPurple,
-                sessionCount = appInfo.sessionCount
+                sessionCount = appInfo.sessionCount,
+                category = appInfo.category,
+                onClick = { onAppClick(appInfo.packageName) }
             )
         }
     }

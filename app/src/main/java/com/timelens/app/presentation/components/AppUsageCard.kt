@@ -21,6 +21,9 @@ import com.timelens.app.presentation.theme.*
 
 import coil.compose.AsyncImage
 
+import androidx.compose.foundation.clickable
+import com.timelens.app.domain.model.AppCategory
+
 @Composable
 fun AppUsageCard(
     icon: Any?,
@@ -29,6 +32,8 @@ fun AppUsageCard(
     progress: Float,
     accentColor: Color,
     sessionCount: Int,
+    category: AppCategory? = null,
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var animationPlayed by remember { mutableStateOf(false) }
@@ -43,7 +48,9 @@ fun AppUsageCard(
     }
 
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = DarkCard)
     ) {
@@ -88,11 +95,29 @@ fun AppUsageCard(
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Text(
-                        text = "$sessionCount aperturas",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = "$sessionCount aperturas",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        )
+                        if (category != null) {
+                            Text(
+                                text = "•",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                            )
+                            Text(
+                                text = category.displayName,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = NeonPurple,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
                 }
 
                 Text(

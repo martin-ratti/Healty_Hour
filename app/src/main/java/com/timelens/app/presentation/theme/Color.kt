@@ -17,6 +17,7 @@ val NeonPurple = Color(0xFFBB86FC)
 val NeonGreen = Color(0xFF00E676)
 val NeonOrange = Color(0xFFFF9100)
 val NeonRed = Color(0xFFFF5252)
+val NeonCyan = Color(0xFF00E5FF)
 
 val DarkBackground = Color(0xFF0D1117)
 val DarkSurface = Color(0xFF161B22)
