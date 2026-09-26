@@ -36,12 +36,10 @@ object TimeFormatter {
         }
     }
 
-    fun getTimeOfDayLabel(hour: Int): String {
-        return when (hour) {
-            in 6..11 -> "Mañana"
-            in 12..17 -> "Tarde"
-            in 18..22 -> "Noche"
-            else -> "Madrugada"
-        }
+    fun getTimeOfDayLabel(hour: Int): String = when (hour) {
+        in 6..11 -> "Mañana"
+        in 12..17 -> "Tarde"
+        in 18..22 -> "Noche"
+        else -> "Madrugada"
     }
 }
