@@ -13,4 +13,5 @@ interface UsageRepository {
     suspend fun getDaySummary(date: LocalDate): DaySummary?
     suspend fun getWeeklyTrend(): List<DaySummary>
     suspend fun saveDaySummary(summary: DaySummary)
+    fun hasUsagePermission(): Boolean
 }
