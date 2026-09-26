@@ -187,10 +187,9 @@ fun HomeContent(summary: DaySummary) {
 
         items(summary.topApps) { appInfo ->
             // Usamos un icono por defecto si no tenemos el ícono real para el preview rápido,
-            // pero el ideal es cargar el Drawable (requeriría Coil u otro para Image). 
-            // Para mantener la UI actual, usamos un icono genérico.
+            // pero ahora soporta Coil con AsyncImage para el Drawable.
             AppUsageCard(
-                icon = Icons.Outlined.Apps,
+                icon = appInfo.icon ?: Icons.Outlined.Apps,
                 appName = appInfo.appName,
                 usageTime = TimeFormatter.formatMillisToShort(appInfo.totalTimeMs),
                 progress = (appInfo.totalTimeMs.toFloat() / summary.totalScreenTimeMs).coerceIn(0f, 1f),

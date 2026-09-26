@@ -19,9 +19,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.timelens.app.presentation.theme.*
 
+import coil.compose.AsyncImage
+
 @Composable
 fun AppUsageCard(
-    icon: ImageVector,
+    icon: Any?,
     appName: String,
     usageTime: String,
     progress: Float,
@@ -60,12 +62,20 @@ fun AppUsageCard(
                     color = accentColor.copy(alpha = 0.15f)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = appName,
-                            tint = accentColor,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        if (icon is ImageVector) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = appName,
+                                tint = accentColor,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            AsyncImage(
+                                model = icon,
+                                contentDescription = appName,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
 
