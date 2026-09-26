@@ -64,12 +64,12 @@ fun HomeScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkBackground,
-                    titleContentColor = NeonBlue
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 )
             )
         },
-        containerColor = DarkBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Box(
             modifier = modifier
@@ -229,7 +229,7 @@ fun HomeContent(
 
                         Surface(
                             shape = RoundedCornerShape(12.dp),
-                            color = DarkCard,
+                            color = MaterialTheme.colorScheme.surfaceVariant,
                             modifier = Modifier.padding(vertical = 4.dp)
                         ) {
                             Row(

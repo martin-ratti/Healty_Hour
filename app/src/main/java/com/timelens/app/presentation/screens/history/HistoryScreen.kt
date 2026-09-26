@@ -36,8 +36,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.timelens.app.domain.model.DaySummary
 import com.timelens.app.presentation.components.WeeklyBarChart
-import com.timelens.app.presentation.theme.DarkBackground
-import com.timelens.app.presentation.theme.DarkCard
 import com.timelens.app.presentation.theme.NeonGreen
 import com.timelens.app.presentation.theme.NeonOrange
 import com.timelens.app.presentation.theme.NeonPurple
@@ -54,7 +52,7 @@ fun HistoryScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         Row(
@@ -118,7 +116,7 @@ fun HistoryContent(weeklyData: List<DaySummary>) {
     // Custom Bar Chart
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = DarkCard)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -143,7 +141,7 @@ fun HistoryContent(weeklyData: List<DaySummary>) {
     ) {
         Card(
             modifier = Modifier.weight(1f),
-            colors = CardDefaults.cardColors(containerColor = DarkCard)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -172,7 +170,7 @@ fun HistoryContent(weeklyData: List<DaySummary>) {
 
         Card(
             modifier = Modifier.weight(1f),
-            colors = CardDefaults.cardColors(containerColor = DarkCard)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),

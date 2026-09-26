@@ -1,10 +1,13 @@
 package com.timelens.app.presentation.screens.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.timelens.app.presentation.theme.*
@@ -40,7 +44,7 @@ fun SettingsScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         TopAppBar(
             title = {
@@ -51,7 +55,7 @@ fun SettingsScreen(
                 )
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = DarkBackground
+                containerColor = MaterialTheme.colorScheme.background
             )
         )
 
@@ -83,7 +87,7 @@ fun SettingsScreen(
             SettingItem(
                 icon = Icons.Outlined.Notifications,
                 title = "Notificaciones",
-                subtitle = if (notificationsEnabled) "Alertas activadas" else "Alertas desactivadas",
+                subtitle = if (notificationsEnabled) "Alertas de bienestar activadas" else "Alertas desactivadas",
                 iconTint = NeonBlue,
                 onClick = { viewModel.toggleNotifications(!notificationsEnabled) },
                 action = {
@@ -98,11 +102,11 @@ fun SettingsScreen(
                 }
             )
 
-            // Tema
+            // Tema (Oscuro / Claro)
             SettingItem(
-                icon = Icons.Outlined.DarkMode,
-                title = "Tema Neón Oscuro",
-                subtitle = if (darkThemeEnabled) "Activado (Recomendado)" else "Desactivado",
+                icon = if (darkThemeEnabled) Icons.Outlined.DarkMode else Icons.Outlined.LightMode,
+                title = if (darkThemeEnabled) "Modo Oscuro Neón" else "Modo Claro",
+                subtitle = if (darkThemeEnabled) "Diseño oscuro con acentos neón" else "Diseño claro y luminoso",
                 iconTint = NeonGreen,
                 onClick = { viewModel.toggleDarkTheme(!darkThemeEnabled) },
                 action = {
@@ -117,21 +121,21 @@ fun SettingsScreen(
                 }
             )
 
-            // Exportar datos
+            // Compartir TimeLens
             SettingItem(
-                icon = Icons.Outlined.FileDownload,
-                title = "Exportar datos",
-                subtitle = "Compartir historial en CSV",
+                icon = Icons.Outlined.Share,
+                title = "Compartir TimeLens",
+                subtitle = "Recomendar la app a un amigo",
                 iconTint = NeonCyan,
                 onClick = {
-                    viewModel.exportDataToCsv { chooserIntent ->
+                    viewModel.shareApp { chooserIntent ->
                         context.startActivity(chooserIntent)
                     }
                 },
                 action = {
                     Icon(
-                        imageVector = Icons.Outlined.Share,
-                        contentDescription = "Exportar",
+                        imageVector = Icons.Outlined.ArrowOutward,
+                        contentDescription = "Compartir",
                         tint = NeonCyan
                     )
                 }
@@ -141,7 +145,7 @@ fun SettingsScreen(
             SettingItem(
                 icon = Icons.Outlined.Info,
                 title = "Acerca de TimeLens",
-                subtitle = "Versión y privacidad",
+                subtitle = "Misión, privacidad y desarrollador",
                 iconTint = MaterialTheme.colorScheme.onSurface,
                 onClick = { showAboutDialog = true },
                 action = {
@@ -187,7 +191,7 @@ fun SettingsScreen(
                                     Toast.makeText(context, "Objetivo actualizado a ${hours}h", Toast.LENGTH_SHORT).show()
                                 },
                             shape = RoundedCornerShape(12.dp),
-                            color = if (hours == dailyGoal) NeonOrange.copy(alpha = 0.2f) else DarkSurface
+                            color = if (hours == dailyGoal) NeonOrange.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surface
                         ) {
                             Row(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -216,48 +220,153 @@ fun SettingsScreen(
                     Text("Cerrar", color = NeonBlue)
                 }
             },
-            containerColor = DarkCard
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     }
 
-    // Dialog: Acerca de
+    // Dialog: Acerca de (Completamente Mejorado y Visual)
     if (showAboutDialog) {
         AlertDialog(
             onDismissRequest = { showAboutDialog = false },
-            icon = {
-                Icon(
-                    imageVector = Icons.Outlined.RemoveRedEye,
-                    contentDescription = null,
-                    tint = NeonBlue,
-                    modifier = Modifier.size(36.dp)
-                )
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Surface(
+                        modifier = Modifier.size(44.dp),
+                        shape = CircleShape,
+                        color = NeonBlue.copy(alpha = 0.2f)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Outlined.RemoveRedEye,
+                                contentDescription = null,
+                                tint = NeonBlue,
+                                modifier = Modifier.size(26.dp)
+                            )
+                        }
+                    }
+                    Column {
+                        Text(
+                            text = "TimeLens",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Consciencia & Bienestar Digital",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = NeonBlue
+                        )
+                    }
+                }
             },
-            title = { Text("TimeLens", fontWeight = FontWeight.Bold) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    // Card Misión
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(
+                                text = "🎯 Nuestra Misión",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge,
+                                color = NeonPurple
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Ayudarte a comprender tus hábitos de uso del teléfono y construir una relación consciente y saludable con la tecnología.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    // Card Privacidad
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(
+                                text = "🛡️ 100% Local & Privado",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge,
+                                color = NeonGreen
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Tus estadísticas nunca salen de este teléfono. No existen servidores externos, telemetría ni rastreadores de publicidad.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    // Card Desarrollador
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(
+                                text = "👨‍💻 Creador",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge,
+                                color = NeonOrange
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Desarrollado por Martín Ratti en colaboración con Antigravity.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
                     Text(
-                        "TimeLens es tu lente de consciencia y bienestar digital.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        "🛡️ Privacidad primero: Ningún dato sale de tu teléfono. Todo el cálculo de estadísticas se ejecuta 100% de manera local en tu dispositivo.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        "Versión: 0.2.0\nDesarrollado en Pair Programming con Antigravity.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        text = "Versión 0.2.0 • Código Abierto",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showAboutDialog = false }) {
-                    Text("Entendido", color = NeonBlue)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/martin-ratti/TimeLens"))
+                            context.startActivity(intent)
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonBlue)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Code,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("GitHub")
+                    }
+                    Button(
+                        onClick = { showAboutDialog = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = NeonBlue)
+                    ) {
+                        Text("Cerrar", color = Color.Black, fontWeight = FontWeight.Bold)
+                    }
                 }
             },
-            containerColor = DarkCard
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     }
 }
@@ -272,7 +381,7 @@ fun SettingItem(
     action: @Composable () -> Unit
 ) {
     Surface(
-        color = DarkCard,
+        color = MaterialTheme.colorScheme.surfaceVariant,
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .fillMaxWidth()

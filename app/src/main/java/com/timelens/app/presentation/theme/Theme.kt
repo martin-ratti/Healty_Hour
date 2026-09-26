@@ -10,23 +10,36 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+import androidx.compose.ui.graphics.Color
+
 private val DarkColorScheme = darkColorScheme(
     primary = NeonBlue,
     secondary = NeonPurple,
     tertiary = NeonGreen,
     background = DarkBackground,
     surface = DarkSurface,
+    surfaceVariant = DarkCard,
     onPrimary = DarkBackground,
     onSecondary = DarkBackground,
     onTertiary = DarkBackground,
-    onBackground = Purple80,
-    onSurface = Purple80
+    onBackground = Color(0xFFF1F5F9),
+    onSurface = Color(0xFFF1F5F9),
+    onSurfaceVariant = Color(0xFF94A3B8)
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Color(0xFF0284C7),
+    secondary = Color(0xFF7C3AED),
+    tertiary = Color(0xFF059669),
+    background = Color(0xFFF1F5F9),
+    surface = Color(0xFFFFFFFF),
+    surfaceVariant = Color(0xFFFFFFFF),
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onTertiary = Color.White,
+    onBackground = Color(0xFF0F172A),
+    onSurface = Color(0xFF0F172A),
+    onSurfaceVariant = Color(0xFF64748B)
 )
 
 @Composable

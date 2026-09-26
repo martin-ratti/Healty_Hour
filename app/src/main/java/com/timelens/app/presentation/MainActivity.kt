@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.timelens.app.data.local.prefs.UserPreferencesManager
 import com.timelens.app.domain.usecase.CheckUsagePermissionUseCase
 import com.timelens.app.presentation.navigation.AppNavHost
 import com.timelens.app.presentation.navigation.NavRoutes
@@ -17,6 +20,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var checkUsagePermissionUseCase: CheckUsagePermissionUseCase
 
+    @Inject
+    lateinit var prefsManager: UserPreferencesManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -28,7 +34,8 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            TimeLensTheme(darkTheme = true) {
+            val isDarkTheme by prefsManager.darkThemeEnabled.collectAsStateWithLifecycle(initialValue = true)
+            TimeLensTheme(darkTheme = isDarkTheme) {
                 AppNavHost(startDestination = startDestination)
             }
         }

@@ -35,31 +35,27 @@ class SettingsViewModel @Inject constructor(
         prefsManager.setDarkThemeEnabled(enabled)
     }
 
-    fun exportDataToCsv(onSuccess: (Intent) -> Unit) {
-        viewModelScope.launch {
-            val history = dailyUsageDao.getLastDays(30)
-            val csvBuilder = StringBuilder()
-            csvBuilder.append("Fecha,Tiempo_Pantalla_Minutos,Desbloqueos,Sesion_Max_Minutos,Sesion_Max_App\n")
+    fun shareApp(onSuccess: (Intent) -> Unit) {
+        val shareMessage = """
+            ⏱️ ¡Te recomiendo TimeLens!
+            
+            Una app para tomar el control de tu tiempo de pantalla, descubrir tus horarios pico y crear hábitos digitales más saludables.
+            
+            🛡️ 100% privada, funciona offline y sin rastreadores.
+            Conoce más en: https://github.com/martin-ratti/TimeLens
+        """.trimIndent()
 
-            history.forEach { entity ->
-                val screenMins = entity.totalScreenTimeMs / (1000 * 60)
-                val longestMins = entity.longestSessionMs / (1000 * 60)
-                csvBuilder.append("${entity.date},$screenMins,${entity.totalUnlocks},$longestMins,${entity.longestSessionApp}\n")
-            }
-
-            val sendIntent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, csvBuilder.toString())
-                type = "text/csv"
-                putExtra(Intent.EXTRA_TITLE, "TimeLens_historial.csv")
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-
-            val chooser = Intent.createChooser(sendIntent, "Exportar historial TimeLens (CSV)").apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-
-            onSuccess(chooser)
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, shareMessage)
+            type = "text/plain"
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
+
+        val chooser = Intent.createChooser(sendIntent, "Compartir TimeLens").apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+
+        onSuccess(chooser)
     }
 }

@@ -20,8 +20,6 @@ import com.timelens.app.presentation.screens.history.HistoryScreen
 import com.timelens.app.presentation.screens.home.HomeScreen
 import com.timelens.app.presentation.screens.onboarding.OnboardingScreen
 import com.timelens.app.presentation.screens.settings.SettingsScreen
-import com.timelens.app.presentation.theme.DarkBackground
-import com.timelens.app.presentation.theme.DarkSurface
 import com.timelens.app.presentation.theme.NeonBlue
 
 @Composable
@@ -39,12 +37,12 @@ fun AppNavHost(
     }
 
     Scaffold(
-        containerColor = DarkBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (showBottomBar) {
                 NavigationBar(
-                    containerColor = DarkSurface,
-                    contentColor = NeonBlue
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.primary
                 ) {
                     BottomNavItem.entries.forEach { item ->
                         val selected = currentDestination?.hierarchy?.any {

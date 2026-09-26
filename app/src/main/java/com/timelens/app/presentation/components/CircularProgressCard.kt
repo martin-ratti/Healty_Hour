@@ -45,7 +45,7 @@ fun CircularProgressCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = DarkCard)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(
             modifier = Modifier
@@ -74,6 +74,8 @@ fun CircularProgressCard(
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            val trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.size(200.dp)
@@ -88,7 +90,7 @@ fun CircularProgressCard(
 
                     // Background arc
                     drawArc(
-                        color = DarkSurface,
+                        color = trackColor,
                         startAngle = -90f,
                         sweepAngle = 360f,
                         useCenter = false,
