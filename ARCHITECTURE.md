@@ -35,32 +35,36 @@ app/src/main/java/com/timelens/app/
 │   │   │   ├── 📂 dao/      # AppDailyUsageDao, DailyUsageDao
 │   │   │   └── 📂 entity/   # AppDailyUsageEntity, DailyUsageEntity
 │   │   └── 📂 usage/        # Proveedor del sistema Android
-│   │       └── UsageDataSource.kt # Habla con UsageStatsManager del sistema
-│   └── 📂 repository/       # Implementaciones de repositorios
+│   │       ├── UsageDataSource.kt # Habla con UsageStatsManager y cachea íconos
+│   │       └── SessionCalculator.kt # Algoritmo de intervalos de pantalla
+│   ├── 📂 preferences/      # Preferencias reactivas (DataStore)
+│   │   └── UserPreferencesManager.kt # Objetivo diario, tema y notificaciones
+│   └── 📂 repository/       # Implementación UsageRepositoryImpl
 │
 ├── 📂 domain/               # 📖 EL LIBRO DE RECETAS (Reglas de negocio)
-│   ├── 📂 model/            # AppUsageInfo, DaySummary, Session
+│   ├── 📂 model/            # AppUsageInfo, DaySummary, AppDetailInfo, AppCategory
 │   ├── 📂 repository/       # UsageRepository (contrato del Chef)
-│   └── 📂 usecase/          # GetDailySummaryUseCase, GetTopAppsUseCase, GetWeeklyTrendUseCase
+│   └── 📂 usecase/          # GetDailySummaryUseCase, GetAppDetailUseCase, GetWeeklyTrendUseCase
 │
 ├── 📂 presentation/         # 🍽️ EL COMEDOR (Lo que ve el usuario)
 │   ├── 📂 screens/          # Pantallas principales
-│   │   ├── 📂 home/         # HomeScreen.kt
-│   │   ├── 📂 history/      # HistoryScreen.kt
-│   │   ├── 📂 settings/     # SettingsScreen.kt
+│   │   ├── 📂 home/         # HomeScreen.kt, HomeViewModel.kt
+│   │   ├── 📂 detail/       # AppDetailScreen.kt, AppDetailViewModel.kt
+│   │   ├── 📂 history/      # HistoryScreen.kt, HistoryViewModel.kt
+│   │   ├── 📂 settings/     # SettingsScreen.kt, SettingsViewModel.kt
 │   │   └── 📂 onboarding/   # OnboardingScreen.kt
-│   ├── 📂 navigation/       # AppNavHost.kt, NavRoutes.kt (Bottom Navigation)
-│   ├── 📂 components/       # AppUsageCard, CircularProgressCard, StatCard
-│   └── 📂 theme/            # Color.kt, Theme.kt (TimeLensTheme), Type.kt
+│   ├── 📂 navigation/       # AppNavHost.kt, NavRoutes.kt (Bottom Navigation & argumentos)
+│   ├── 📂 components/       # AppUsageCard, CircularProgressCard, StatCard, WeeklyBarChart, HourlyBarChart
+│   └── 📂 theme/            # Color.kt, Theme.kt (TimeLensTheme dinámico), Type.kt
 │
 ├── 📂 di/                   # 🪄 INYECCIÓN DE DEPENDENCIAS (Hilt)
-│   └── AppModule.kt         # Provee TimeLensDatabase y DAOs
+│   └── AppModule.kt         # Provee TimeLensDatabase, DAOs y Repositorios
 │
 ├── 📂 util/                 # 🛠️ UTILIDADES
-│   └── TimeFormatter.kt     # Formateador de tiempos y porcentajes
+│   └── TimeFormatter.kt     # Formateador de tiempos, horas y porcentajes
 │
 ├── TimeLensApp.kt           # 🚀 Application class (Hilt)
-└── MainActivity.kt          # 🚪 Entrada principal de la app
+└── MainActivity.kt          # 🚪 Entrada principal (observa el tema dinámico)
 ```
 
 ---

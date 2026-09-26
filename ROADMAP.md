@@ -11,10 +11,10 @@
 | Fase 0 — Preparación | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
 | Fase 1 — Permisos y Datos | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
 | Fase 2 — Motor de Métricas | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
-| Fase 3 — Base de Datos Room | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 95% |
+| Fase 3 — Base de Datos Room | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
 | Fase 4 — UI con Compose | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
 | Fase 5 — Notificaciones | ⬜ Pendiente | ░░░░░░░░░░ 0% |
-| Fase 6 — Testing y Pulido | 🟡 En progreso | ▓▓▓░░░░░░░ 30% |
+| Fase 6 — Testing y Pulido | 🟢 Avanzada | ▓▓▓▓▓▓▓░░░ 70% |
 | Fase 7 — Publicación | ⬜ Pendiente | ░░░░░░░░░░ 0% |
 
 ---
@@ -132,24 +132,26 @@
   - Mejor y peor día calculados
   - Promedio semanal
 - [x] **Settings**
-  - Objetivo diario
+  - Objetivo diario con selector interactivo
   - Notificaciones on/off
-  - Tema oscuro/claro
-  - Exportar datos (CSV)
+  - Tema dinámico con cambio reactivo (Modo Oscuro Neón y Modo Claro)
+  - Compartir TimeLens con selector nativo de Android
+  - Diálogo Acerca de interactivo con misión, privacidad, autoría y repositorio
 
 ### Diseño visual
-- [x] Definir paleta de colores (oscura con acentos neón)
-- [x] Configurar Material 3
-- [x] Implementar tema oscuro desde el inicio
-- [x] Animaciones con `animateFloatAsState`
-- [x] Componente nativo de barras (`WeeklyBarChart`)
+- [x] Definir paleta de colores (Modo Oscuro Neón y Modo Claro)
+- [x] Configurar Material 3 con colorScheme dinámico
+- [x] Implementar temas reactivos con DataStore Preferences
+- [x] Animaciones fluidas con `animateFloatAsState`
+- [x] Componentes nativos de gráficos en Canvas (`WeeklyBarChart` y `HourlyBarChart`)
 
 ### Navegación
 - [x] Configurar Navigation Compose
 - [x] Bottom navigation entre pantallas principales (Inicio, Tendencias, Ajustes)
+- [x] Navegación con argumentos a pantalla de detalle (`AppDetailScreen`)
 
 ### 🎯 Entregable
-> Todas las pantallas funcionales con datos reales y gráficos.
+> Todas las pantallas funcionales con datos reales, gráficos nativos y soporte para temas claro/oscuro.
 
 ---
 
@@ -173,15 +175,14 @@
 
 🟡 **Prioridad: Alta**
 
-- [ ] Tests unitarios completos (SessionCalculator, MetricsEngine, UseCases)
-- [ ] Tests de integración para DAOs
+- [x] Tests unitarios completos (SessionCalculator, DailySummaryCalculator, TimeFormatter)
+- [x] Corrección de discrepancias en cálculo de tiempo diario y eventos superpuestos
+- [x] Optimización de rendimiento con caché en memoria en `UsageDataSource`
+- [x] Pruebas y validación en dispositivo físico real con datos reales
+- [ ] Tests de integración para DAOs con base de datos en memoria
 - [ ] Tests de UI básicos con Compose Testing
-- [ ] Probar en dispositivos reales (mínimo 2 dispositivos diferentes)
-- [ ] Probar en Android 8.0 (API 26) hasta Android 14 (API 35)
-- [ ] Revisar rendimiento con apps de muchos eventos
-- [ ] Manejar edge cases: sin datos, primer día, permisos revocados
-- [ ] Pulir animaciones y transiciones
-- [ ] Revisar accesibilidad básica
+- [ ] Probar en múltiples versiones de Android (API 26 a API 35)
+- [ ] Pulir transiciones avanzadas y accesibilidad adicional
 
 ### 🎯 Entregable
 > App estable, probada y pulida, lista para publicar.
@@ -227,4 +228,4 @@
 
 ---
 
-*Documento actualizado: 25 de septiembre de 2026*
+*Documento actualizado: 26 de septiembre de 2026*

@@ -92,13 +92,11 @@ La mejor forma de aprender es rompiendo cosas (¡con cuidado!). Intenta hacer es
 2.  **Cambiar colores:**
     *   Ve a `app/src/main/java/com/timelens/app/presentation/theme/Color.kt`.
     *   Cambia los códigos HEX (como `NeonBlue` o `NeonPurple`) para ver cómo cambian los acentos de la app.
-3.  **Cambiar los datos de prueba (Mock Data):**
-    *   Ve al archivo `HomeScreen.kt`.
-    *   Busca la lista de aplicaciones (como "Instagram", "YouTube").
-    *   ¡Cambia los iconos o nombres de tus apps favoritas o modifica los minutos!
-4.  **Añade una app adicional:**
-    *   En esa misma lista de prueba en el código, añade un nuevo `AppUsageCard` debajo y cambia sus datos.
-5.  **Juega con los Textos:**
-    *   Cambia cualquier texto que diga "VS ayer" por "Comparado con el día de ayer".
+3.  **Probar el Modo Claro y Oscuro:**
+    *   Ejecuta la app, dirígete a la pestaña **Ajustes** y cambia el interruptor de **Modo Oscuro / Modo Claro**. ¡Observa cómo Compose redibuja la interfaz completa en tiempo real!
+4.  **Explorar el detalle de una app:**
+    *   Toca cualquiera de las tarjetas de aplicaciones en la pantalla de inicio. Te llevará a `AppDetailScreen`, donde verás el desglose por hora y el historial semanal real de esa aplicación.
+5.  **Juega con los Textos y Acentos:**
+    *   Ve a `SettingsScreen.kt` o `HomeScreen.kt` y personaliza los textos o colores para adaptarlos a tu gusto personal.
 
 ¡No tengas miedo a equivocarte! Si el texto se pone rojo, solo usa el botón de deshacer (`Ctrl+Z`). ¡Tú puedes! 🚀

@@ -86,4 +86,4 @@ chore(gradle): update Compose BOM version
 
 ---
 
-*Documento actualizado: 25 de septiembre de 2026*
+*Documento actualizado: 26 de septiembre de 2026*
