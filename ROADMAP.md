@@ -8,11 +8,11 @@
 
 | Fase | Estado | Progreso |
 |:---|:---|:---|
-| Fase 0 — Preparación | 🟡 En progreso | ▓░░░░░░░░░ 10% |
-| Fase 1 — Permisos y Datos | ⬜ Pendiente | ░░░░░░░░░░ 0% |
-| Fase 2 — Motor de Métricas | ⬜ Pendiente | ░░░░░░░░░░ 0% |
-| Fase 3 — Base de Datos Room | ⬜ Pendiente | ░░░░░░░░░░ 0% |
-| Fase 4 — UI con Compose | ⬜ Pendiente | ░░░░░░░░░░ 0% |
+| Fase 0 — Preparación | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
+| Fase 1 — Permisos y Datos | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
+| Fase 2 — Motor de Métricas | 🟡 En progreso | ▓▓▓▓▓▓▓░░░ 70% |
+| Fase 3 — Base de Datos Room | 🟡 En progreso | ▓▓▓▓▓▓▓░░░ 70% |
+| Fase 4 — UI con Compose | 🟡 En progreso | ▓▓▓▓▓▓▓▓░░ 80% |
 | Fase 5 — Notificaciones | ⬜ Pendiente | ░░░░░░░░░░ 0% |
 | Fase 6 — Testing y Pulido | ⬜ Pendiente | ░░░░░░░░░░ 0% |
 | Fase 7 — Publicación | ⬜ Pendiente | ░░░░░░░░░░ 0% |
@@ -25,13 +25,13 @@
 
 - [x] Crear repositorio en GitHub
 - [x] Crear documentación inicial (README, SETUP, ARCHITECTURE, etc.)
-- [ ] Instalar Android Studio
-- [ ] Crear proyecto con Empty Compose Activity
-- [ ] Configurar `minSdk = 26`, `targetSdk = 35`
-- [ ] Agregar dependencias iniciales (Compose, Room, Hilt, Navigation, Vico)
-- [ ] Crear estructura de carpetas del proyecto
-- [ ] Configurar Hilt en la Application class
-- [ ] Primer commit con el proyecto base
+- [x] Instalar Android Studio
+- [x] Crear proyecto con Empty Compose Activity
+- [x] Configurar `minSdk = 26`, `targetSdk = 35`
+- [x] Agregar dependencias iniciales (Compose, Room, Hilt, Navigation, Vico)
+- [x] Crear estructura de carpetas del proyecto
+- [x] Configurar Hilt en la Application class
+- [x] Primer commit con el proyecto base
 
 ---
 
@@ -40,19 +40,19 @@
 🔴 **Prioridad: Crítica**
 
 ### 1.1 Permisos
-- [ ] Agregar `PACKAGE_USAGE_STATS` al AndroidManifest.xml
-- [ ] Crear pantalla de onboarding que explique el permiso
-- [ ] Implementar redirección a Ajustes del sistema
-- [ ] Verificar si el permiso fue concedido al volver a la app
-- [ ] Manejar caso sin permiso (pantalla amigable)
+- [x] Agregar `PACKAGE_USAGE_STATS` al AndroidManifest.xml
+- [x] Crear pantalla de onboarding que explique el permiso
+- [x] Implementar redirección a Ajustes del sistema
+- [x] Verificar si el permiso fue concedido al volver a la app
+- [x] Manejar caso sin permiso (pantalla amigable)
 
 ### 1.2 Lectura de datos
-- [ ] Crear `UsageDataSource` — wrapper de `UsageStatsManager`
-- [ ] Implementar `queryUsageStats()` para estadísticas diarias
-- [ ] Implementar `queryEvents()` para eventos granulares
-- [ ] Resolver nombres de apps con `PackageManager.getApplicationLabel()`
-- [ ] Resolver íconos de apps con `PackageManager.getApplicationIcon()`
-- [ ] Cachear nombres e íconos para no repetir consultas
+- [x] Crear `UsageDataSource` — wrapper de `UsageStatsManager`
+- [x] Implementar `queryUsageStats()` para estadísticas diarias
+- [x] Implementar `queryEvents()` para eventos granulares
+- [x] Resolver nombres de apps con `PackageManager.getApplicationLabel()`
+- [x] Resolver íconos de apps con `PackageManager.getApplicationIcon()`
+- [x] Cachear nombres e íconos para no repetir consultas
 
 ### 🎯 Entregable
 > La app muestra en un `Text()` la lista de apps usadas hoy con su tiempo.
@@ -64,15 +64,15 @@
 🔴 **Prioridad: Crítica**
 
 ### Nivel Básico
-- [ ] Tiempo total de pantalla del día
-- [ ] Top 5 apps más usadas
-- [ ] Cantidad de desbloqueos
+- [x] Tiempo total de pantalla del día
+- [x] Top 5 apps más usadas
+- [x] Cantidad de desbloqueos
 
 ### Nivel Intermedio
-- [ ] Sesión continua más larga por app
-- [ ] Cantidad de aperturas por app
+- [x] Sesión continua más larga por app
+- [x] Cantidad de aperturas por app
 - [ ] Tiempo promedio por sesión
-- [ ] Horario pico (franja horaria con más actividad)
+- [x] Horario pico (franja horaria con más actividad)
 
 ### Nivel Avanzado
 - [ ] "Racha tóxica" — sesión continua más larga sin importar la app
@@ -82,7 +82,7 @@
 - [ ] Categorización automática de apps
 
 ### Testing del motor
-- [ ] Crear `SessionCalculator` con tests unitarios
+- [x] Crear `SessionCalculator` (tests pendientes) unitarios
 - [ ] Crear `MetricsEngine` con tests
 - [ ] Tests para edge cases (sesiones superpuestas, falta de PAUSED, medianoche)
 
@@ -95,9 +95,9 @@
 
 🟡 **Prioridad: Alta**
 
-- [ ] Crear entidades Room (`DailyUsage`, `AppDailyUsage`)
-- [ ] Crear DAOs con queries útiles
-- [ ] Crear `TimeLensDatabase`
+- [x] Crear entidades Room (`DailyUsage`, `AppDailyUsage`)
+- [x] Crear DAOs con queries útiles
+- [x] Crear `TimeLensDatabase`
 - [ ] Implementar `Worker` (WorkManager) para guardar snapshots cada hora
 - [ ] Tarea periódica de resumen al final del día
 - [ ] Implementar migración de esquema para futuras versiones
@@ -112,7 +112,7 @@
 🟡 **Prioridad: Alta**
 
 ### Pantallas
-- [ ] **Home / Dashboard**
+- [x] **Home / Dashboard**
   - Círculo animado con tiempo total
   - Barra comparativa con ayer
   - Top 3 apps con íconos
@@ -122,26 +122,26 @@
   - Gráfico de barras por hora
   - Historial últimos 7 días
   - Métricas detalladas
-- [ ] **Historial / Trends**
+- [x] **Historial / Trends**
   - Gráfico de línea 7/30 días
   - Mejor/peor día
   - Promedio semanal
-- [ ] **Settings**
+- [x] **Settings**
   - Objetivo diario
   - Notificaciones on/off
   - Tema oscuro/claro
   - Exportar datos (CSV)
 
 ### Diseño visual
-- [ ] Definir paleta de colores (oscura con acentos neón)
-- [ ] Configurar Material 3
-- [ ] Implementar tema oscuro desde el inicio
+- [x] Definir paleta de colores (oscura con acentos neón)
+- [x] Configurar Material 3
+- [x] Implementar tema oscuro desde el inicio
 - [ ] Animaciones con `animateFloatAsState` y `AnimatedVisibility`
-- [ ] Integrar gráficos con Vico
+- [x] Integrar gráficos con Vico
 
 ### Navegación
-- [ ] Configurar Navigation Compose
-- [ ] Bottom navigation entre pantallas principales
+- [x] Configurar Navigation Compose
+- [x] Bottom navigation entre pantallas principales
 
 ### 🎯 Entregable
 > Todas las pantallas funcionales con datos reales y gráficos.
