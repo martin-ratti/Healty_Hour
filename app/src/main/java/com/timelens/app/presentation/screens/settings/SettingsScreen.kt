@@ -1,53 +1,42 @@
 package com.timelens.app.presentation.screens.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material.icons.outlined.Flag
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.timelens.app.presentation.theme.DarkBackground
-import com.timelens.app.presentation.theme.DarkCard
-import com.timelens.app.presentation.theme.NeonBlue
-import com.timelens.app.presentation.theme.NeonGreen
-import com.timelens.app.presentation.theme.NeonOrange
-import com.timelens.app.presentation.theme.TimeLensTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.timelens.app.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val dailyGoal by viewModel.dailyGoalHours.collectAsStateWithLifecycle()
+    val notificationsEnabled by viewModel.notificationsEnabled.collectAsStateWithLifecycle()
+    val darkThemeEnabled by viewModel.darkThemeEnabled.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+
+    var showGoalDialog by remember { mutableStateOf(false) }
+    var showAboutDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -73,29 +62,34 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Objetivo diario
             SettingItem(
                 icon = Icons.Outlined.Flag,
                 title = "Objetivo diario",
-                subtitle = "Configurar límite de tiempo",
+                subtitle = "Límite: $dailyGoal horas al día",
                 iconTint = NeonOrange,
+                onClick = { showGoalDialog = true },
                 action = {
-                    Icon(
-                        imageVector = Icons.Outlined.ChevronRight,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    Text(
+                        text = "${dailyGoal}h",
+                        color = NeonOrange,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             )
 
+            // Notificaciones
             SettingItem(
                 icon = Icons.Outlined.Notifications,
                 title = "Notificaciones",
-                subtitle = "Alertas de tiempo",
+                subtitle = if (notificationsEnabled) "Alertas activadas" else "Alertas desactivadas",
                 iconTint = NeonBlue,
+                onClick = { viewModel.toggleNotifications(!notificationsEnabled) },
                 action = {
                     Switch(
-                        checked = true,
-                        onCheckedChange = { },
+                        checked = notificationsEnabled,
+                        onCheckedChange = { viewModel.toggleNotifications(it) },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = NeonBlue,
                             checkedTrackColor = NeonBlue.copy(alpha = 0.5f)
@@ -104,15 +98,17 @@ fun SettingsScreen(
                 }
             )
 
+            // Tema
             SettingItem(
                 icon = Icons.Outlined.DarkMode,
-                title = "Tema",
-                subtitle = "Oscuro / Claro",
+                title = "Tema Neón Oscuro",
+                subtitle = if (darkThemeEnabled) "Activado (Recomendado)" else "Desactivado",
                 iconTint = NeonGreen,
+                onClick = { viewModel.toggleDarkTheme(!darkThemeEnabled) },
                 action = {
                     Switch(
-                        checked = true,
-                        onCheckedChange = { },
+                        checked = darkThemeEnabled,
+                        onCheckedChange = { viewModel.toggleDarkTheme(it) },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = NeonGreen,
                             checkedTrackColor = NeonGreen.copy(alpha = 0.5f)
@@ -121,25 +117,33 @@ fun SettingsScreen(
                 }
             )
 
+            // Exportar datos
             SettingItem(
                 icon = Icons.Outlined.FileDownload,
                 title = "Exportar datos",
-                subtitle = "Guardar historial en CSV",
-                iconTint = MaterialTheme.colorScheme.onSurface,
+                subtitle = "Compartir historial en CSV",
+                iconTint = NeonCyan,
+                onClick = {
+                    viewModel.exportDataToCsv { chooserIntent ->
+                        context.startActivity(chooserIntent)
+                    }
+                },
                 action = {
                     Icon(
-                        imageVector = Icons.Outlined.ChevronRight,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        imageVector = Icons.Outlined.Share,
+                        contentDescription = "Exportar",
+                        tint = NeonCyan
                     )
                 }
             )
 
+            // Acerca de
             SettingItem(
                 icon = Icons.Outlined.Info,
-                title = "Acerca de",
-                subtitle = "Información de la aplicación",
+                title = "Acerca de TimeLens",
+                subtitle = "Versión y privacidad",
                 iconTint = MaterialTheme.colorScheme.onSurface,
+                onClick = { showAboutDialog = true },
                 action = {
                     Icon(
                         imageVector = Icons.Outlined.ChevronRight,
@@ -150,14 +154,111 @@ fun SettingsScreen(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             Text(
-                text = "Versión 0.2.0",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = "TimeLens v0.2.0 • 100% Local & Privado",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
+    }
+
+    // Dialog: Seleccionar Objetivo Diario
+    if (showGoalDialog) {
+        AlertDialog(
+            onDismissRequest = { showGoalDialog = false },
+            title = { Text("Definir objetivo diario", fontWeight = FontWeight.Bold) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        "Selecciona la cantidad de horas máxima recomendada por día:",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    listOf(4, 5, 6, 7, 8, 9).forEach { hours ->
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    viewModel.setDailyGoal(hours)
+                                    showGoalDialog = false
+                                    Toast.makeText(context, "Objetivo actualizado a ${hours}h", Toast.LENGTH_SHORT).show()
+                                },
+                            shape = RoundedCornerShape(12.dp),
+                            color = if (hours == dailyGoal) NeonOrange.copy(alpha = 0.2f) else DarkSurface
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "$hours horas",
+                                    fontWeight = if (hours == dailyGoal) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (hours == dailyGoal) NeonOrange else MaterialTheme.colorScheme.onSurface
+                                )
+                                if (hours == dailyGoal) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Check,
+                                        contentDescription = null,
+                                        tint = NeonOrange
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showGoalDialog = false }) {
+                    Text("Cerrar", color = NeonBlue)
+                }
+            },
+            containerColor = DarkCard
+        )
+    }
+
+    // Dialog: Acerca de
+    if (showAboutDialog) {
+        AlertDialog(
+            onDismissRequest = { showAboutDialog = false },
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.RemoveRedEye,
+                    contentDescription = null,
+                    tint = NeonBlue,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = { Text("TimeLens", fontWeight = FontWeight.Bold) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        "TimeLens es tu lente de consciencia y bienestar digital.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        "🛡️ Privacidad primero: Ningún dato sale de tu teléfono. Todo el cálculo de estadísticas se ejecuta 100% de manera local en tu dispositivo.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        "Versión: 0.2.0\nDesarrollado en Pair Programming con Antigravity.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showAboutDialog = false }) {
+                    Text("Entendido", color = NeonBlue)
+                }
+            },
+            containerColor = DarkCard
+        )
     }
 }
 
@@ -166,13 +267,16 @@ fun SettingItem(
     icon: ImageVector,
     title: String,
     subtitle: String,
-    iconTint: androidx.compose.ui.graphics.Color,
+    iconTint: Color,
+    onClick: () -> Unit = {},
     action: @Composable () -> Unit
 ) {
     Surface(
         color = DarkCard,
         shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier
@@ -203,13 +307,5 @@ fun SettingItem(
             }
             action()
         }
-    }
-}
-
-@Preview
-@Composable
-fun SettingsScreenPreview() {
-    TimeLensTheme {
-        SettingsScreen()
     }
 }

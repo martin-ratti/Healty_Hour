@@ -28,6 +28,7 @@ fun CircularProgressCard(
     totalTimeText: String,
     progress: Float, // 0f to 1f
     comparisonText: String,
+    goalHours: Int = 6,
     modifier: Modifier = Modifier
 ) {
     var animationPlayed by remember { mutableStateOf(false) }
@@ -118,7 +119,7 @@ fun CircularProgressCard(
                         color = NeonBlue
                     )
                     Text(
-                        text = "de 6h objetivo",
+                        text = "de ${goalHours}h objetivo",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )

@@ -4,10 +4,13 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import com.timelens.app.domain.model.AppCategory
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Calendar
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,8 +23,23 @@ class UsageDataSource @Inject constructor(
 
     private val packageManager: PackageManager = context.packageManager
 
-    private val appNameCache = mutableMapOf<String, String>()
-    private val appIconCache = mutableMapOf<String, Drawable?>()
+    private val appNameCache = ConcurrentHashMap<String, String>()
+    private val appIconCache = ConcurrentHashMap<String, Drawable?>()
+    private val categoryCache = ConcurrentHashMap<String, AppCategory>()
+
+    // One-time fast batch query for all user-launchable apps
+    private val launchablePackages: Set<String> by lazy {
+        try {
+            val intent = Intent(Intent.ACTION_MAIN).apply {
+                addCategory(Intent.CATEGORY_LAUNCHER)
+            }
+            packageManager.queryIntentActivities(intent, 0)
+                .mapNotNull { it.activityInfo?.packageName }
+                .toSet()
+        } catch (e: Exception) {
+            emptySet()
+        }
+    }
 
     fun getDailyUsageStats(): List<UsageStats> {
         val calendar = Calendar.getInstance().apply {
@@ -60,8 +78,16 @@ class UsageDataSource @Inject constructor(
         return eventList
     }
 
+    fun getUsageStatsForRange(startTime: Long, endTime: Long): List<UsageStats> {
+        return usageStatsManager.queryUsageStats(
+            UsageStatsManager.INTERVAL_DAILY,
+            startTime,
+            endTime
+        ).filter { it.totalTimeInForeground > 0 }
+    }
+
     fun getAppName(packageName: String): String {
-        return appNameCache.getOrPut(packageName) {
+        return appNameCache.computeIfAbsent(packageName) {
             try {
                 val appInfo = packageManager.getApplicationInfo(packageName, 0)
                 packageManager.getApplicationLabel(appInfo).toString()
@@ -84,63 +110,56 @@ class UsageDataSource @Inject constructor(
     }
 
     fun getAppIcon(packageName: String): Drawable? {
-        return appIconCache.getOrPut(packageName) {
+        return appIconCache.computeIfAbsent(packageName) {
             try {
                 packageManager.getApplicationIcon(packageName)
-            } catch (e: PackageManager.NameNotFoundException) {
+            } catch (e: Exception) {
                 null
             }
         }
     }
 
-    private val eligibleCache = mutableMapOf<String, Boolean>()
-    
     fun isAppEligibleForStats(packageName: String): Boolean {
-        return eligibleCache.getOrPut(packageName) {
-            val lowerPkg = packageName.lowercase()
-            // Always allow well-known user apps even if intent lookup fails
-            if (lowerPkg.contains("youtube") || 
-                lowerPkg.contains("whatsapp") || 
-                lowerPkg.contains("instagram") || 
-                lowerPkg.contains("musically") ||
-                lowerPkg.contains("spotify") || 
-                lowerPkg.contains("twitter") || 
-                lowerPkg.contains("tiktok") || 
-                lowerPkg.contains("chrome")) {
-                return@getOrPut true
-            }
-            // Ignore system launchers, system UI, and known internal packages
-            if (lowerPkg.contains("systemui") || 
-                lowerPkg.contains("launcher") || 
-                lowerPkg.contains("digitalwellbeing") ||
-                lowerPkg.contains("overlay") ||
-                lowerPkg.contains("wallpaper") ||
-                lowerPkg.contains("settings") ||
-                lowerPkg == "android") {
-                return@getOrPut false
-            }
-            // Check if it has a launcher intent (meaning it's a real user app)
-            val intent = packageManager.getLaunchIntentForPackage(packageName)
-            intent != null
+        val lowerPkg = packageName.lowercase()
+        // Always allow well-known user apps
+        if (lowerPkg.contains("youtube") || 
+            lowerPkg.contains("whatsapp") || 
+            lowerPkg.contains("instagram") || 
+            lowerPkg.contains("musically") || 
+            lowerPkg.contains("spotify") || 
+            lowerPkg.contains("twitter") || 
+            lowerPkg.contains("tiktok") || 
+            lowerPkg.contains("chrome")) {
+            return true
         }
+        // Ignore system launchers, system UI, and known internal packages
+        if (lowerPkg.contains("systemui") || 
+            lowerPkg.contains("launcher") || 
+            lowerPkg.contains("digitalwellbeing") || 
+            lowerPkg.contains("overlay") || 
+            lowerPkg.contains("wallpaper") || 
+            lowerPkg.contains("settings") || 
+            lowerPkg == "android") {
+            return false
+        }
+        // Fast O(1) in-memory lookup instead of blocking Binder IPC
+        return launchablePackages.contains(packageName)
     }
 
-    private val categoryCache = mutableMapOf<String, com.timelens.app.domain.model.AppCategory>()
-
-    fun getAppCategory(packageName: String): com.timelens.app.domain.model.AppCategory {
-        return categoryCache.getOrPut(packageName) {
+    fun getAppCategory(packageName: String): AppCategory {
+        return categoryCache.computeIfAbsent(packageName) {
             try {
                 val appInfo = packageManager.getApplicationInfo(packageName, 0)
                 when (appInfo.category) {
-                    android.content.pm.ApplicationInfo.CATEGORY_GAME -> com.timelens.app.domain.model.AppCategory.GAMING
+                    android.content.pm.ApplicationInfo.CATEGORY_GAME -> AppCategory.GAMING
                     android.content.pm.ApplicationInfo.CATEGORY_AUDIO,
-                    android.content.pm.ApplicationInfo.CATEGORY_VIDEO -> com.timelens.app.domain.model.AppCategory.ENTERTAINMENT
+                    android.content.pm.ApplicationInfo.CATEGORY_VIDEO -> AppCategory.ENTERTAINMENT
                     android.content.pm.ApplicationInfo.CATEGORY_IMAGE,
-                    android.content.pm.ApplicationInfo.CATEGORY_SOCIAL -> com.timelens.app.domain.model.AppCategory.SOCIAL
+                    android.content.pm.ApplicationInfo.CATEGORY_SOCIAL -> AppCategory.SOCIAL
                     android.content.pm.ApplicationInfo.CATEGORY_NEWS,
-                    android.content.pm.ApplicationInfo.CATEGORY_PRODUCTIVITY -> com.timelens.app.domain.model.AppCategory.PRODUCTIVITY
+                    android.content.pm.ApplicationInfo.CATEGORY_PRODUCTIVITY -> AppCategory.PRODUCTIVITY
                     android.content.pm.ApplicationInfo.CATEGORY_MAPS,
-                    android.content.pm.ApplicationInfo.CATEGORY_ACCESSIBILITY -> com.timelens.app.domain.model.AppCategory.UTILITY
+                    android.content.pm.ApplicationInfo.CATEGORY_ACCESSIBILITY -> AppCategory.UTILITY
                     else -> inferCategoryFromPackage(packageName)
                 }
             } catch (e: Exception) {
@@ -149,16 +168,16 @@ class UsageDataSource @Inject constructor(
         }
     }
 
-    private fun inferCategoryFromPackage(packageName: String): com.timelens.app.domain.model.AppCategory {
+    private fun inferCategoryFromPackage(packageName: String): AppCategory {
         val lower = packageName.lowercase()
         return when {
-            lower.contains("whatsapp") || lower.contains("telegram") || lower.contains("messenger") || lower.contains("messaging") || lower.contains("dialer") -> com.timelens.app.domain.model.AppCategory.COMMUNICATION
-            lower.contains("instagram") || lower.contains("tiktok") || lower.contains("musically") || lower.contains("twitter") || lower.contains("facebook") || lower.contains("x.android") || lower.contains("linkedin") || lower.contains("reddit") -> com.timelens.app.domain.model.AppCategory.SOCIAL
-            lower.contains("youtube") || lower.contains("spotify") || lower.contains("netflix") || lower.contains("twitch") || lower.contains("primevideo") || lower.contains("disney") -> com.timelens.app.domain.model.AppCategory.ENTERTAINMENT
-            lower.contains("chrome") || lower.contains("drive") || lower.contains("docs") || lower.contains("sheets") || lower.contains("notion") || lower.contains("slack") || lower.contains("gmail") || lower.contains("outlook") -> com.timelens.app.domain.model.AppCategory.PRODUCTIVITY
-            lower.contains("duolingo") || lower.contains("learn") -> com.timelens.app.domain.model.AppCategory.EDUCATION
-            lower.contains("game") || lower.contains("candycrush") || lower.contains("supercell") || lower.contains("roblox") || lower.contains("minecraft") -> com.timelens.app.domain.model.AppCategory.GAMING
-            else -> com.timelens.app.domain.model.AppCategory.OTHER
+            lower.contains("whatsapp") || lower.contains("telegram") || lower.contains("messenger") || lower.contains("messaging") || lower.contains("dialer") -> AppCategory.COMMUNICATION
+            lower.contains("instagram") || lower.contains("tiktok") || lower.contains("musically") || lower.contains("twitter") || lower.contains("facebook") || lower.contains("x.android") || lower.contains("linkedin") || lower.contains("reddit") -> AppCategory.SOCIAL
+            lower.contains("youtube") || lower.contains("spotify") || lower.contains("netflix") || lower.contains("twitch") || lower.contains("primevideo") || lower.contains("disney") -> AppCategory.ENTERTAINMENT
+            lower.contains("chrome") || lower.contains("drive") || lower.contains("docs") || lower.contains("sheets") || lower.contains("notion") || lower.contains("slack") || lower.contains("gmail") || lower.contains("outlook") -> AppCategory.PRODUCTIVITY
+            lower.contains("duolingo") || lower.contains("learn") -> AppCategory.EDUCATION
+            lower.contains("game") || lower.contains("candycrush") || lower.contains("supercell") || lower.contains("roblox") || lower.contains("minecraft") -> AppCategory.GAMING
+            else -> AppCategory.OTHER
         }
     }
 

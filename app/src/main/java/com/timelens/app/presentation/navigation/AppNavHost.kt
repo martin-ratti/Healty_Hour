@@ -106,6 +106,9 @@ fun AppNavHost(
                 HomeScreen(
                     onAppClick = { packageName ->
                         navController.navigate(NavRoutes.AppDetail.createRoute(packageName))
+                    },
+                    onNavigateToSettings = {
+                        navController.navigate(NavRoutes.Settings.route)
                     }
                 )
             }

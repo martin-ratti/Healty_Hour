@@ -31,6 +31,7 @@ import com.timelens.app.util.TimeFormatter
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onAppClick: (String) -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -55,7 +56,7 @@ fun HomeScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: navigate to settings */ }) {
+                    IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = "Ajustes"
@@ -114,6 +115,7 @@ fun HomeScreen(
                     HomeContent(
                         summary = state.summary,
                         comparisonText = state.comparisonText,
+                        dailyGoalHours = state.dailyGoalHours,
                         onAppClick = onAppClick
                     )
                 }
@@ -126,10 +128,10 @@ fun HomeScreen(
 fun HomeContent(
     summary: DaySummary,
     comparisonText: String,
+    dailyGoalHours: Int = 6,
     onAppClick: (String) -> Unit = {}
 ) {
-    // Calculamos el objetivo de 6 horas para el progreso (6h = 21600000ms)
-    val dailyGoalMs = 6 * 60 * 60 * 1000L
+    val dailyGoalMs = dailyGoalHours * 60 * 60 * 1000L
     val progress = (summary.totalScreenTimeMs.toFloat() / dailyGoalMs).coerceIn(0f, 1f)
 
     val categoryUsage = remember(summary.topApps) {
@@ -151,7 +153,8 @@ fun HomeContent(
             CircularProgressCard(
                 totalTimeText = TimeFormatter.formatMillisToShort(summary.totalScreenTimeMs),
                 progress = progress,
-                comparisonText = comparisonText
+                comparisonText = comparisonText,
+                goalHours = dailyGoalHours
             )
         }
 
@@ -214,7 +217,7 @@ fun HomeContent(
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(categoryUsage) { (category, timeMs) ->
+                    items(items = categoryUsage, key = { it.first.name }) { (category, timeMs) ->
                         val catColor = when (category) {
                             AppCategory.SOCIAL -> NeonPurple
                             AppCategory.ENTERTAINMENT -> NeonOrange
@@ -279,7 +282,7 @@ fun HomeContent(
             }
         }
 
-        items(summary.topApps) { appInfo ->
+        items(items = summary.topApps, key = { it.packageName }) { appInfo ->
             AppUsageCard(
                 icon = appInfo.icon ?: Icons.Outlined.Apps,
                 appName = appInfo.appName,

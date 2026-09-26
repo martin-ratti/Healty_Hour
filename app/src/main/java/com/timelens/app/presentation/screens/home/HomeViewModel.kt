@@ -15,9 +15,15 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
+import com.timelens.app.data.local.prefs.UserPreferencesManager
+
 sealed interface HomeUiState {
     data object Loading : HomeUiState
-    data class Success(val summary: DaySummary, val comparisonText: String = "") : HomeUiState
+    data class Success(
+        val summary: DaySummary,
+        val comparisonText: String = "",
+        val dailyGoalHours: Int = 6
+    ) : HomeUiState
     data class Error(val message: String) : HomeUiState
     data object MissingPermission : HomeUiState
 }
@@ -26,7 +32,8 @@ sealed interface HomeUiState {
 class HomeViewModel @Inject constructor(
     private val getDailySummaryUseCase: GetDailySummaryUseCase,
     private val checkUsagePermissionUseCase: CheckUsagePermissionUseCase,
-    private val repository: UsageRepository
+    private val repository: UsageRepository,
+    private val prefsManager: UserPreferencesManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
@@ -46,13 +53,14 @@ class HomeViewModel @Inject constructor(
                 }
                 val summary = getDailySummaryUseCase()
                 val yesterday = repository.getDaySummary(LocalDate.now().minusDays(1))
+                val goal = prefsManager.dailyGoalHours.value
                 val comparisonText = if (yesterday != null && yesterday.totalScreenTimeMs > 0) {
                     TimeFormatter.formatPercentageChange(summary.totalScreenTimeMs, yesterday.totalScreenTimeMs)
                 } else {
-                    "🎯 Meta diaria: 6h"
+                    "🎯 Meta diaria: ${goal}h"
                 }
 
-                _uiState.value = HomeUiState.Success(summary, comparisonText)
+                _uiState.value = HomeUiState.Success(summary, comparisonText, goal)
             } catch (e: Exception) {
                 _uiState.value = HomeUiState.Error(e.message ?: "Error desconocido")
             }
