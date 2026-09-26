@@ -104,7 +104,7 @@ fun HomeScreen(
                     )
                 }
                 is HomeUiState.Success -> {
-                    HomeContent(summary = state.summary)
+                    HomeContent(summary = state.summary, comparisonText = state.comparisonText)
                 }
             }
         }
@@ -112,9 +112,9 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeContent(summary: DaySummary) {
-    // Calculamos el objetivo de 8 horas para el progreso (8h = 28800000ms)
-    val dailyGoalMs = 8 * 60 * 60 * 1000L
+fun HomeContent(summary: DaySummary, comparisonText: String) {
+    // Calculamos el objetivo de 6 horas para el progreso (6h = 21600000ms)
+    val dailyGoalMs = 6 * 60 * 60 * 1000L
     val progress = (summary.totalScreenTimeMs.toFloat() / dailyGoalMs).coerceIn(0f, 1f)
     
     LazyColumn(
@@ -128,7 +128,7 @@ fun HomeContent(summary: DaySummary) {
             CircularProgressCard(
                 totalTimeText = TimeFormatter.formatMillisToShort(summary.totalScreenTimeMs),
                 progress = progress,
-                comparisonText = "Real data" // Todo: get comparison from yesterday
+                comparisonText = comparisonText
             )
         }
 
@@ -148,16 +148,16 @@ fun HomeContent(summary: DaySummary) {
                 StatCard(
                     icon = Icons.Outlined.Timer,
                     title = "Sesión max",
-                    value = summary.longestSession?.durationMs?.let { TimeFormatter.formatMillisToShort(it) } ?: "N/A",
-                    subtitle = summary.longestSession?.appName ?: "-",
+                    value = summary.longestSession?.durationMs?.let { TimeFormatter.formatMillisToShort(it) } ?: "0m",
+                    subtitle = summary.longestSession?.appName ?: "Sin uso",
                     accentColor = NeonPurple,
                     modifier = Modifier.weight(1f)
                 )
                 StatCard(
-                    icon = Icons.Outlined.DarkMode,
+                    icon = Icons.Outlined.Schedule,
                     title = "Horario pico",
                     value = TimeFormatter.getTimeOfDayLabel(summary.peakHour),
-                    subtitle = "${summary.peakHour}:00",
+                    subtitle = String.format(java.util.Locale.getDefault(), "%02d:00", summary.peakHour),
                     accentColor = NeonBlue,
                     modifier = Modifier.weight(1f)
                 )

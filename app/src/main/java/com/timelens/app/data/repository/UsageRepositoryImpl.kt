@@ -27,30 +27,43 @@ class UsageRepositoryImpl @Inject constructor(
 ) : UsageRepository {
 
     override suspend fun getTodaySummary(): DaySummary = withContext(Dispatchers.IO) {
-        val apps = getAppUsageToday()
-        val totalTime = apps.sumOf { it.totalTimeMs }
-        val topApps = apps.sortedByDescending { it.totalTimeMs }.take(5)
-
-        val events = dataSource.getDailyEvents()
-        
-        // Use calendar exact midnight for start time
         val calendar = java.util.Calendar.getInstance().apply {
             set(java.util.Calendar.HOUR_OF_DAY, 0)
             set(java.util.Calendar.MINUTE, 0)
             set(java.util.Calendar.SECOND, 0)
             set(java.util.Calendar.MILLISECOND, 0)
         }
-        val metrics = SessionCalculator.calculateMetrics(events, calendar.timeInMillis)
+        val events = dataSource.getDailyEvents()
+        val metrics = SessionCalculator.calculateMetrics(
+            eventsList = events,
+            startTimeMs = calendar.timeInMillis,
+            isEligibleApp = { dataSource.isAppEligibleForStats(it) }
+        )
+
+        val apps = metrics.appUsageMap.map { (packageName, totalTimeMs) ->
+            AppUsageInfo(
+                packageName = packageName,
+                appName = dataSource.getAppName(packageName),
+                icon = dataSource.getAppIcon(packageName),
+                totalTimeMs = totalTimeMs,
+                sessionCount = metrics.appSessionCountMap[packageName] ?: 0,
+                longestSessionMs = if (metrics.longestSessionAppPackage == packageName) metrics.longestSessionMs else 0L
+            )
+        }.filter { it.totalTimeMs > 0 }
+         .sortedByDescending { it.totalTimeMs }
+
+        val totalTime = apps.sumOf { it.totalTimeMs }
+        val topApps = apps.take(5)
 
         val longestSessionAppInfo = apps.find { it.packageName == metrics.longestSessionAppPackage }
 
-        val longestSession = if (metrics.longestSessionAppPackage != null) {
+        val longestSession = if (metrics.longestSessionAppPackage != null && metrics.longestSessionMs > 0) {
             Session(
                 packageName = metrics.longestSessionAppPackage,
                 appName = longestSessionAppInfo?.appName ?: dataSource.getAppName(metrics.longestSessionAppPackage),
                 durationMs = metrics.longestSessionMs,
-                startTimeMs = 0L, // Mock startTime for now
-                endTimeMs = 0L    // Mock endTime for now
+                startTimeMs = 0L,
+                endTimeMs = 0L
             )
         } else null
 
@@ -71,19 +84,20 @@ class UsageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAppUsageToday(): List<AppUsageInfo> = withContext(Dispatchers.IO) {
-        val events = dataSource.getDailyEvents()
         val calendar = java.util.Calendar.getInstance().apply {
             set(java.util.Calendar.HOUR_OF_DAY, 0)
             set(java.util.Calendar.MINUTE, 0)
             set(java.util.Calendar.SECOND, 0)
             set(java.util.Calendar.MILLISECOND, 0)
         }
-        val metrics = SessionCalculator.calculateMetrics(events, calendar.timeInMillis)
+        val events = dataSource.getDailyEvents()
+        val metrics = SessionCalculator.calculateMetrics(
+            eventsList = events,
+            startTimeMs = calendar.timeInMillis,
+            isEligibleApp = { dataSource.isAppEligibleForStats(it) }
+        )
 
-        // Map from our exact usage calculations instead of UsageStats
-        metrics.appUsageMap.mapNotNull { (packageName, totalTimeMs) ->
-            if (!dataSource.isAppEligibleForStats(packageName)) return@mapNotNull null
-            
+        metrics.appUsageMap.map { (packageName, totalTimeMs) ->
             AppUsageInfo(
                 packageName = packageName,
                 appName = dataSource.getAppName(packageName),

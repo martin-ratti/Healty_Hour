@@ -66,7 +66,19 @@ class UsageDataSource @Inject constructor(
                 val appInfo = packageManager.getApplicationInfo(packageName, 0)
                 packageManager.getApplicationLabel(appInfo).toString()
             } catch (e: PackageManager.NameNotFoundException) {
-                packageName.substringAfterLast(".")
+                when (packageName) {
+                    "com.zhiliaoapp.musically" -> "TikTok"
+                    "com.google.android.youtube" -> "YouTube"
+                    "com.whatsapp" -> "WhatsApp"
+                    "com.instagram.android" -> "Instagram"
+                    "com.twitter.android", "com.x.android" -> "X"
+                    "com.spotify.music" -> "Spotify"
+                    "com.facebook.katana" -> "Facebook"
+                    "com.google.android.apps.messaging" -> "Mensajes"
+                    "com.google.android.dialer" -> "Teléfono"
+                    "com.android.chrome" -> "Chrome"
+                    else -> packageName.substringAfterLast(".").replaceFirstChar { it.uppercase() }
+                }
             }
         }
     }
@@ -85,11 +97,25 @@ class UsageDataSource @Inject constructor(
     
     fun isAppEligibleForStats(packageName: String): Boolean {
         return eligibleCache.getOrPut(packageName) {
-            // Ignore common system UIs and Launchers
             val lowerPkg = packageName.lowercase()
+            // Always allow well-known user apps even if intent lookup fails
+            if (lowerPkg.contains("youtube") || 
+                lowerPkg.contains("whatsapp") || 
+                lowerPkg.contains("instagram") || 
+                lowerPkg.contains("musically") ||
+                lowerPkg.contains("spotify") || 
+                lowerPkg.contains("twitter") || 
+                lowerPkg.contains("tiktok") || 
+                lowerPkg.contains("chrome")) {
+                return@getOrPut true
+            }
+            // Ignore system launchers, system UI, and known internal packages
             if (lowerPkg.contains("systemui") || 
                 lowerPkg.contains("launcher") || 
                 lowerPkg.contains("digitalwellbeing") ||
+                lowerPkg.contains("overlay") ||
+                lowerPkg.contains("wallpaper") ||
+                lowerPkg.contains("settings") ||
                 lowerPkg == "android") {
                 return@getOrPut false
             }
