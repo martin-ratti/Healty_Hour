@@ -12,11 +12,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class HomeUiState {
-    object Loading : HomeUiState()
-    data class Success(val summary: DaySummary) : HomeUiState()
-    data class Error(val message: String) : HomeUiState()
-    object MissingPermission : HomeUiState()
+sealed interface HomeUiState {
+    data object Loading : HomeUiState
+    data class Success(val summary: DaySummary) : HomeUiState
+    data class Error(val message: String) : HomeUiState
+    data object MissingPermission : HomeUiState
 }
 
 @HiltViewModel
