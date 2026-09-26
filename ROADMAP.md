@@ -10,11 +10,11 @@
 |:---|:---|:---|
 | Fase 0 — Preparación | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
 | Fase 1 — Permisos y Datos | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 100% |
-| Fase 2 — Motor de Métricas | 🟡 En progreso | ▓▓▓▓▓▓▓░░░ 70% |
-| Fase 3 — Base de Datos Room | 🟡 En progreso | ▓▓▓▓▓▓▓░░░ 70% |
-| Fase 4 — UI con Compose | 🟡 En progreso | ▓▓▓▓▓▓▓▓░░ 80% |
+| Fase 2 — Motor de Métricas | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 90% |
+| Fase 3 — Base de Datos Room | 🟢 Completada | ▓▓▓▓▓▓▓▓▓▓ 90% |
+| Fase 4 — UI con Compose | 🟡 En progreso | ▓▓▓▓▓▓▓▓░░ 85% |
 | Fase 5 — Notificaciones | ⬜ Pendiente | ░░░░░░░░░░ 0% |
-| Fase 6 — Testing y Pulido | ⬜ Pendiente | ░░░░░░░░░░ 0% |
+| Fase 6 — Testing y Pulido | ⬜ Pendiente | ░░░░░░░░░░ 10% |
 | Fase 7 — Publicación | ⬜ Pendiente | ░░░░░░░░░░ 0% |
 
 ---
@@ -41,6 +41,7 @@
 
 ### 1.1 Permisos
 - [x] Agregar `PACKAGE_USAGE_STATS` al AndroidManifest.xml
+- [x] Agregar `QUERY_ALL_PACKAGES` para compatibilidad completa en Android 11+
 - [x] Crear pantalla de onboarding que explique el permiso
 - [x] Implementar redirección a Ajustes del sistema
 - [x] Verificar si el permiso fue concedido al volver a la app
@@ -50,9 +51,10 @@
 - [x] Crear `UsageDataSource` — wrapper de `UsageStatsManager`
 - [x] Implementar `queryUsageStats()` para estadísticas diarias
 - [x] Implementar `queryEvents()` para eventos granulares
-- [x] Resolver nombres de apps con `PackageManager.getApplicationLabel()`
+- [x] Resolver nombres de apps con `PackageManager.getApplicationLabel()` y nombres limpios
 - [x] Resolver íconos de apps con `PackageManager.getApplicationIcon()`
 - [x] Cachear nombres e íconos para no repetir consultas
+- [x] Filtro de aplicaciones elegibles (exclusión de Launcher y System UI)
 
 ### 🎯 Entregable
 > La app muestra en un `Text()` la lista de apps usadas hoy con su tiempo.
@@ -70,21 +72,21 @@
 
 ### Nivel Intermedio
 - [x] Sesión continua más larga por app
-- [x] Cantidad de aperturas por app
+- [x] Cantidad de aperturas por app (máquina de estados de línea de tiempo)
 - [ ] Tiempo promedio por sesión
 - [x] Horario pico (franja horaria con más actividad)
 
 ### Nivel Avanzado
-- [ ] "Racha tóxica" — sesión continua más larga sin importar la app
-- [ ] Comparativa día a día ("Hoy +23% vs ayer")
-- [ ] Tendencia semanal (últimos 7 días)
+- [x] Sesión continua más larga real del día
+- [x] Comparativa día a día ("Hoy -15% vs ayer")
+- [x] Tendencia semanal (últimos 7 días con gráfico dinámico)
 - [ ] "Momento más productivo" — franja con menos uso
 - [ ] Categorización automática de apps
 
 ### Testing del motor
-- [x] Crear `SessionCalculator` (tests pendientes) unitarios
-- [ ] Crear `MetricsEngine` con tests
-- [ ] Tests para edge cases (sesiones superpuestas, falta de PAUSED, medianoche)
+- [x] Crear `SessionCalculator` con máquina de estados precisa
+- [x] Tests unitarios iniciales para `SessionCalculator`
+- [ ] Tests adicionales para edge cases (sesiones cruzando medianoche, múltiples reinicios)
 
 ### 🎯 Entregable
 > Todas las métricas calculándose correctamente con tests que lo demuestren.
@@ -96,10 +98,10 @@
 🟡 **Prioridad: Alta**
 
 - [x] Crear entidades Room (`DailyUsage`, `AppDailyUsage`)
-- [x] Crear DAOs con queries útiles
+- [x] Crear DAOs con queries útiles (`DailyUsageDao`, `AppDailyUsageDao`)
 - [x] Crear `TimeLensDatabase`
-- [ ] Implementar `Worker` (WorkManager) para guardar snapshots cada hora
-- [ ] Tarea periódica de resumen al final del día
+- [x] Implementar `DailySyncWorker` (WorkManager) para sincronizar en segundo plano
+- [x] Tarea periódica de resumen persistida cada 12h
 - [ ] Implementar migración de esquema para futuras versiones
 
 ### 🎯 Entregable
@@ -113,18 +115,19 @@
 
 ### Pantallas
 - [x] **Home / Dashboard**
-  - Círculo animado con tiempo total
-  - Barra comparativa con ayer
-  - Top 3 apps con íconos
-  - Tarjeta sesión más larga
-  - Tarjeta desbloqueos
+  - Círculo animado con tiempo total y objetivo sincronizado
+  - Barra comparativa dinámica con ayer
+  - Apps más usadas con íconos, aperturas y barra de progreso proporcional
+  - Tarjeta sesión más larga con nombre limpio
+  - Tarjeta desbloqueos precisa
+  - Tarjeta horario pico con formato limpio
 - [ ] **Detalle por App**
-  - Gráfico de barras por hora
-  - Historial últimos 7 días
-  - Métricas detalladas
+  - Gráfico de barras por hora para la app seleccionada
+  - Aperturas y promedio por sesión
+  - Historial de uso de esa app
 - [x] **Historial / Trends**
-  - Gráfico de línea 7/30 días
-  - Mejor/peor día
+  - Gráfico de barras semanal con Compose Canvas nativo
+  - Mejor y peor día calculados
   - Promedio semanal
 - [x] **Settings**
   - Objetivo diario
@@ -136,12 +139,12 @@
 - [x] Definir paleta de colores (oscura con acentos neón)
 - [x] Configurar Material 3
 - [x] Implementar tema oscuro desde el inicio
-- [ ] Animaciones con `animateFloatAsState` y `AnimatedVisibility`
-- [x] Integrar gráficos con Vico
+- [x] Animaciones con `animateFloatAsState`
+- [x] Componente nativo de barras (`WeeklyBarChart`)
 
 ### Navegación
 - [x] Configurar Navigation Compose
-- [x] Bottom navigation entre pantallas principales
+- [x] Bottom navigation entre pantallas principales (Inicio, Tendencias, Ajustes)
 
 ### 🎯 Entregable
 > Todas las pantallas funcionales con datos reales y gráficos.
