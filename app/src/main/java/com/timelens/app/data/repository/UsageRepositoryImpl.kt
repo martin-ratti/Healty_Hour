@@ -4,6 +4,8 @@ import com.timelens.app.data.local.db.dao.AppDailyUsageDao
 import com.timelens.app.data.local.db.dao.DailyUsageDao
 import com.timelens.app.data.local.db.entity.AppDailyUsageEntity
 import com.timelens.app.data.local.db.entity.DailyUsageEntity
+import com.timelens.app.data.local.db.entity.toDomain
+import com.timelens.app.data.local.db.entity.toEntity
 import com.timelens.app.data.local.usage.UsageDataSource
 import com.timelens.app.domain.model.AppUsageInfo
 import com.timelens.app.domain.model.DaySummary
@@ -92,25 +94,10 @@ class UsageRepositoryImpl @Inject constructor(
         val appEntities = appDailyUsageDao.getByDate(dateString)
 
         val topApps = appEntities.take(5).map {
-            AppUsageInfo(
-                packageName = it.packageName,
-                appName = it.appName,
-                icon = dataSource.getAppIcon(it.packageName),
-                totalTimeMs = it.totalTimeMs,
-                sessionCount = it.sessionCount,
-                longestSessionMs = it.longestSessionMs
-            )
+            it.toDomain(dataSource.getAppIcon(it.packageName))
         }
 
-        DaySummary(
-            date = date,
-            totalScreenTimeMs = entity.totalScreenTimeMs,
-            totalUnlocks = entity.totalUnlocks,
-            topApps = topApps,
-            longestSession = if (entity.longestSessionApp.isNotEmpty()) Session(entity.longestSessionApp, dataSource.getAppName(entity.longestSessionApp), entity.longestSessionMs, 0L, 0L) else null,
-            peakHour = entity.peakHour,
-            totalSessions = entity.totalSessions
-        )
+        entity.toDomain(topApps, dataSource.getAppName(entity.longestSessionApp))
     }
 
     override suspend fun getWeeklyTrend(): List<DaySummary> = withContext(Dispatchers.IO) {
@@ -121,31 +108,9 @@ class UsageRepositoryImpl @Inject constructor(
     override suspend fun saveDaySummary(summary: DaySummary) = withContext(Dispatchers.IO) {
         val dateString = summary.date.toString()
         
-        val dailyEntity = DailyUsageEntity(
-            date = dateString,
-            totalScreenTimeMs = summary.totalScreenTimeMs,
-            totalUnlocks = summary.totalUnlocks,
-            longestSessionMs = summary.longestSession?.durationMs ?: 0L,
-            longestSessionApp = summary.longestSession?.packageName ?: "",
-            topAppPackage = summary.topApps.firstOrNull()?.packageName ?: "",
-            topAppTimeMs = summary.topApps.firstOrNull()?.totalTimeMs ?: 0L,
-            totalSessions = summary.totalSessions,
-            peakHour = summary.peakHour
-        )
-        
-        dailyUsageDao.insertOrUpdate(dailyEntity)
+        dailyUsageDao.insertOrUpdate(summary.toEntity())
 
-        val appEntities = summary.topApps.map { app ->
-            AppDailyUsageEntity(
-                date = dateString,
-                packageName = app.packageName,
-                appName = app.appName,
-                totalTimeMs = app.totalTimeMs,
-                sessionCount = app.sessionCount,
-                longestSessionMs = app.longestSessionMs,
-                category = null
-            )
-        }
+        val appEntities = summary.topApps.map { it.toEntity(dateString) }
         
         appDailyUsageDao.insertAll(appEntities)
     }

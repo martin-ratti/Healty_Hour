@@ -22,7 +22,7 @@ sealed class HomeUiState {
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getDailySummaryUseCase: GetDailySummaryUseCase,
-    private val repository: UsageRepository
+    private val checkUsagePermissionUseCase: CheckUsagePermissionUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
             try {
-                if (!repository.hasUsagePermission()) {
+                if (!checkUsagePermissionUseCase()) {
                     _uiState.value = HomeUiState.MissingPermission
                     return@launch
                 }
