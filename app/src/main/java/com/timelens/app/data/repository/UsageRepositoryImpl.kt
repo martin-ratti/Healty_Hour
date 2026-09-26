@@ -32,7 +32,15 @@ class UsageRepositoryImpl @Inject constructor(
         val topApps = apps.sortedByDescending { it.totalTimeMs }.take(5)
 
         val events = dataSource.getDailyEvents()
-        val metrics = SessionCalculator.calculateMetrics(events)
+        
+        // Use calendar exact midnight for start time
+        val calendar = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val metrics = SessionCalculator.calculateMetrics(events, calendar.timeInMillis)
 
         val longestSessionAppInfo = apps.find { it.packageName == metrics.longestSessionAppPackage }
 
@@ -63,18 +71,24 @@ class UsageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAppUsageToday(): List<AppUsageInfo> = withContext(Dispatchers.IO) {
-        val stats = dataSource.getDailyUsageStats()
         val events = dataSource.getDailyEvents()
-        val metrics = SessionCalculator.calculateMetrics(events) // Basic calculation, in future we can map per app
+        val calendar = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val metrics = SessionCalculator.calculateMetrics(events, calendar.timeInMillis)
 
-        stats.map { stat ->
+        // Map from our exact usage calculations instead of UsageStats
+        metrics.appUsageMap.map { (packageName, totalTimeMs) ->
             AppUsageInfo(
-                packageName = stat.packageName,
-                appName = dataSource.getAppName(stat.packageName),
-                icon = dataSource.getAppIcon(stat.packageName),
-                totalTimeMs = stat.totalTimeInForeground,
-                sessionCount = 0, // We can enhance calculator to return map of session counts per app
-                longestSessionMs = if (metrics.longestSessionAppPackage == stat.packageName) metrics.longestSessionMs else 0L
+                packageName = packageName,
+                appName = dataSource.getAppName(packageName),
+                icon = dataSource.getAppIcon(packageName),
+                totalTimeMs = totalTimeMs,
+                sessionCount = metrics.appSessionCountMap[packageName] ?: 0,
+                longestSessionMs = if (metrics.longestSessionAppPackage == packageName) metrics.longestSessionMs else 0L
             )
         }.filter { it.totalTimeMs > 0 }
          .sortedByDescending { it.totalTimeMs }
